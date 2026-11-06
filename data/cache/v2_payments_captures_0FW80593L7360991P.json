@@ -1,0 +1,49 @@
+{
+  "id": "0FW80593L7360991P",
+  "amount": {
+    "currency_code": "USD",
+    "value": "750.00"
+  },
+  "final_capture": true,
+  "seller_protection": {
+    "status": "ELIGIBLE",
+    "dispute_categories": [
+      "ITEM_NOT_RECEIVED",
+      "UNAUTHORIZED_TRANSACTION"
+    ]
+  },
+  "invoice_id": "INV-E2462F39",
+  "custom_id": "ORDER-A123",
+  "status": "PENDING",
+  "status_details": {
+    "reason": "BUYER_COMPLAINT"
+  },
+  "supplementary_data": {
+    "related_ids": {
+      "order_id": "8FS35646M7113023B"
+    }
+  },
+  "payee": {
+    "email_address": "sb-jzaep53656720@business.example.com",
+    "merchant_id": "L7AL425V7L3AU"
+  },
+  "create_time": "2026-11-06T09:01:56Z",
+  "update_time": "2026-11-06T09:09:32Z",
+  "links": [
+    {
+      "href": "https://api.sandbox.paypal.com/v2/payments/captures/0FW80593L7360991P",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "https://api.sandbox.paypal.com/v2/payments/captures/0FW80593L7360991P/refund",
+      "rel": "refund",
+      "method": "POST"
+    },
+    {
+      "href": "https://api.sandbox.paypal.com/v2/checkout/orders/8FS35646M7113023B",
+      "rel": "up",
+      "method": "GET"
+    }
+  ]
+}

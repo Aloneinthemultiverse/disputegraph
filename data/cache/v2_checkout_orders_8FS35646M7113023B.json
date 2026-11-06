@@ -1,0 +1,165 @@
+{
+  "id": "8FS35646M7113023B",
+  "intent": "CAPTURE",
+  "status": "COMPLETED",
+  "payment_source": {
+    "paypal": {
+      "email_address": "sb-tdjek53714116@personal.example.com",
+      "account_id": "GH83NWYXWK9TW",
+      "account_status": "VERIFIED",
+      "name": {
+        "given_name": "John",
+        "surname": "Doe"
+      },
+      "address": {
+        "country_code": "US"
+      }
+    }
+  },
+  "purchase_units": [
+    {
+      "reference_id": "A123",
+      "amount": {
+        "currency_code": "USD",
+        "value": "750.00",
+        "breakdown": {}
+      },
+      "payee": {
+        "email_address": "sb-jzaep53656720@business.example.com",
+        "merchant_id": "L7AL425V7L3AU"
+      },
+      "description": "Laptop (SYNTHETIC demo order)",
+      "custom_id": "ORDER-A123",
+      "invoice_id": "INV-E2462F39",
+      "soft_descriptor": "PAYPAL *TEST STORE",
+      "shipping": {
+        "name": {
+          "full_name": "John Doe"
+        },
+        "address": {
+          "address_line_1": "2211 N First St",
+          "admin_area_2": "San Jose",
+          "admin_area_1": "CA",
+          "postal_code": "95131",
+          "country_code": "US"
+        }
+      },
+      "payments": {
+        "captures": [
+          {
+            "id": "0FW80593L7360991P",
+            "status": "PENDING",
+            "status_details": {
+              "reason": "BUYER_COMPLAINT"
+            },
+            "amount": {
+              "currency_code": "USD",
+              "value": "750.00"
+            },
+            "final_capture": true,
+            "seller_protection": {
+              "status": "ELIGIBLE",
+              "dispute_categories": [
+                "ITEM_NOT_RECEIVED",
+                "UNAUTHORIZED_TRANSACTION"
+              ]
+            },
+            "invoice_id": "INV-E2462F39",
+            "custom_id": "ORDER-A123",
+            "links": [
+              {
+                "href": "https://api.sandbox.paypal.com/v2/payments/captures/0FW80593L7360991P",
+                "rel": "self",
+                "method": "GET"
+              },
+              {
+                "href": "https://api.sandbox.paypal.com/v2/payments/captures/0FW80593L7360991P/refund",
+                "rel": "refund",
+                "method": "POST"
+              },
+              {
+                "href": "https://api.sandbox.paypal.com/v2/checkout/orders/8FS35646M7113023B",
+                "rel": "up",
+                "method": "GET"
+              }
+            ],
+            "create_time": "2026-11-06T09:01:56Z",
+            "update_time": "2026-11-06T09:09:32Z"
+          }
+        ],
+        "refunds": [
+          {
+            "id": "4YY98995SX807650L",
+            "amount": {
+              "currency_code": "USD",
+              "value": "723.33"
+            },
+            "seller_payable_breakdown": {
+              "gross_amount": {
+                "currency_code": "USD",
+                "value": "723.33"
+              },
+              "paypal_fee": {
+                "currency_code": "USD",
+                "value": "0.00"
+              },
+              "platform_fees": [
+                {
+                  "amount": {
+                    "currency_code": "USD",
+                    "value": "0.00"
+                  }
+                }
+              ],
+              "net_amount": {
+                "currency_code": "USD",
+                "value": "723.33"
+              },
+              "total_refunded_amount": {
+                "currency_code": "USD",
+                "value": "0.00"
+              }
+            },
+            "invoice_id": "INV-E2462F39",
+            "custom_id": "ORDER-A123",
+            "status": "PENDING",
+            "links": [
+              {
+                "href": "https://api.sandbox.paypal.com/v2/payments/refunds/4YY98995SX807650L",
+                "rel": "self",
+                "method": "GET"
+              },
+              {
+                "href": "https://api.sandbox.paypal.com/v2/payments/captures/0FW80593L7360991P",
+                "rel": "up",
+                "method": "GET"
+              }
+            ],
+            "create_time": "2026-11-06T01:09:32-08:00",
+            "update_time": "2026-11-06T01:09:32-08:00"
+          }
+        ]
+      }
+    }
+  ],
+  "payer": {
+    "name": {
+      "given_name": "John",
+      "surname": "Doe"
+    },
+    "email_address": "sb-tdjek53714116@personal.example.com",
+    "payer_id": "GH83NWYXWK9TW",
+    "address": {
+      "country_code": "US"
+    }
+  },
+  "create_time": "2026-11-06T09:01:56Z",
+  "update_time": "2026-11-06T09:09:32Z",
+  "links": [
+    {
+      "href": "https://api.sandbox.paypal.com/v2/checkout/orders/8FS35646M7113023B",
+      "rel": "self",
+      "method": "GET"
+    }
+  ]
+}

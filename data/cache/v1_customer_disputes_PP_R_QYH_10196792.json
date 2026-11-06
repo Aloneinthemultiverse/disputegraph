@@ -1,0 +1,143 @@
+{
+  "dispute_id": "PP-R-QYH-10196792",
+  "create_time": "2026-11-06T09:06:26.575Z",
+  "update_time": "2026-11-06T09:09:53.730Z",
+  "disputed_transactions": [
+    {
+      "buyer_transaction_id": "0MC64396F60965048",
+      "seller_transaction_id": "0FW80593L7360991P",
+      "create_time": "2026-11-06T09:01:56.000Z",
+      "transaction_status": "HELD",
+      "gross_amount": {
+        "currency_code": "USD",
+        "value": "750.00"
+      },
+      "invoice_number": "INV-E2462F39",
+      "custom": "ORDER-A123",
+      "buyer": {
+        "email": "sb-tdjek53714116@personal.example.com",
+        "payer_id": "GH83NWYXWK9TW",
+        "name": "John Doe"
+      },
+      "seller": {
+        "email": "sb-jzaep53656720@business.example.com",
+        "merchant_id": "L7AL425V7L3AU",
+        "name": "Test Store"
+      },
+      "items": [
+        {
+          "item_name": "Laptop (SYNTHETIC demo order)",
+          "item_description": "Laptop (SYNTHETIC demo order)",
+          "item_quantity": "1",
+          "reason": "MERCHANDISE_OR_SERVICE_NOT_RECEIVED",
+          "item_type": "PRODUCT"
+        }
+      ],
+      "seller_protection_eligible": true,
+      "seller_protection_type": "EXPANDED_SELLER_PROTECTION"
+    }
+  ],
+  "reason": "MERCHANDISE_OR_SERVICE_NOT_RECEIVED",
+  "status": "WAITING_FOR_SELLER_RESPONSE",
+  "dispute_amount": {
+    "currency_code": "USD",
+    "value": "750.00"
+  },
+  "dispute_state": "REQUIRED_ACTION",
+  "fund_movements": [
+    {
+      "party": "RECEIVER",
+      "amount": {
+        "currency_code": "USD",
+        "value": "723.33"
+      },
+      "initiated_time": "2026-11-06T09:09:33.000Z",
+      "type": "DEBIT",
+      "reason": "HOLD_PLACED"
+    }
+  ],
+  "dispute_life_cycle_stage": "INQUIRY",
+  "dispute_channel": "INTERNAL",
+  "messages": [
+    {
+      "posted_by": "BUYER",
+      "time_posted": "2026-11-06T09:06:26.575Z",
+      "content": "I didn\u2019t receive an item I bought[SYNTHETIC test]"
+    }
+  ],
+  "extensions": {
+    "buyer_contacted_time": "2026-11-06T09:06:25.867Z"
+  },
+  "evidences": [
+    {
+      "evidence_type": "CREATE",
+      "notes": "I didn\u2019t receive an item I bought[SYNTHETIC test]",
+      "source": "SUBMITTED_BY_BUYER",
+      "date": "2026-11-06T09:06:26.575Z",
+      "dispute_life_cycle_stage": "INQUIRY"
+    },
+    {
+      "evidence_type": "PROOF_OF_FULFILLMENT",
+      "source": "REQUESTED_FROM_SELLER",
+      "date": "2026-11-06T09:09:53.730Z"
+    }
+  ],
+  "seller_response_due_date": "2026-11-26T09:06:26.575Z",
+  "offer": {
+    "buyer_requested_amount": {
+      "currency_code": "USD",
+      "value": "750.00"
+    }
+  },
+  "refund_details": {
+    "allowed_refund_amount": {
+      "currency_code": "USD",
+      "value": "750.00"
+    }
+  },
+  "allowed_response_options": {
+    "accept_claim": {
+      "accept_claim_types": [
+        "PARTIAL_REFUND",
+        "REFUND"
+      ]
+    },
+    "make_offer": {
+      "offer_types": [
+        "REFUND"
+      ]
+    }
+  },
+  "links": [
+    {
+      "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-QYH-10196792",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-QYH-10196792/accept-claim",
+      "rel": "accept_claim",
+      "method": "POST"
+    },
+    {
+      "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-QYH-10196792/provide-evidence",
+      "rel": "provide_evidence",
+      "method": "POST"
+    },
+    {
+      "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-QYH-10196792/send-message",
+      "rel": "send_message",
+      "method": "POST"
+    },
+    {
+      "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-QYH-10196792/escalate",
+      "rel": "escalate",
+      "method": "POST"
+    },
+    {
+      "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-QYH-10196792/make-offer",
+      "rel": "make_offer",
+      "method": "POST"
+    }
+  ]
+}
