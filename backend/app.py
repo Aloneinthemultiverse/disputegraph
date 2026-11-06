@@ -22,6 +22,7 @@ from .disputegraph.gate import ask
 from .disputegraph.merchant import MERCHANT
 from .disputegraph.paypal import CACHE, PayPal
 from .disputegraph.reconcile import Finding
+from .disputegraph.turbograph import graph_for
 
 ROOT = Path(__file__).resolve().parents[1]
 STATIC = ROOT / "frontend"
@@ -69,7 +70,18 @@ def ask_question(dispute_id: str, q: Question):
     result = inv.investigate(dispute_id)
     findings = [Finding(**f) for f in result["findings"]]
     inv.log(dispute_id, "User", "ask", q.question)
-    return ask(q.question, findings)
+    out = ask(q.question, findings)
+    # supporting passages from TurboVec-HippoRAG (2-bit codes + exact entity graph + push-PPR)
+    hits = graph_for(result["invoice_id"]).search(q.question, 4)
+    out["evidence"] = hits
+    inv.log(dispute_id, "Retriever", "turbovec-hipporag",
+            f"{hits['stats']['chunks']} chunks, {hits['stats']['exact_edges']} edges, {hits['embed_source']}")
+    return out
+
+
+@app.get("/api/disputes/{dispute_id}/search")
+def search(dispute_id: str, q: str, k: int = 5):
+    return graph_for(inv.investigate(dispute_id)["invoice_id"]).search(q, k)
 
 
 @app.post("/api/disputes/{dispute_id}/evidence")

@@ -80,8 +80,10 @@ def _strength(findings: list[Finding], facts: list[Fact]) -> list[dict]:
 
 def investigate(dispute_id: str) -> dict:
     t0 = time.perf_counter()
-    log(dispute_id, "PayPal Analyst", "fetch", f"/v1/customer/disputes/{dispute_id} + linked capture/order")
     pg = PayPalGraph().from_dispute(dispute_id)
+    via = pg.pp.via.get(f"/v1/customer/disputes/{dispute_id}", "rest")
+    log(dispute_id, "PayPal Analyst", "fetch",
+        f"dispute via {via}; capture/order via REST links ({len(pg.g)} nodes)")
     inv = next(f.value for f in pg.facts if f.field == "invoice_id")
     m_facts = extract(inv)
     docs = sorted({f.source.ref for f in m_facts})
@@ -104,6 +106,7 @@ def investigate(dispute_id: str) -> dict:
         "elapsed_ms": round((time.perf_counter() - t0) * 1000),
         "summary": summary,
         "llm_facts": sum(1 for f in m_facts if f.method == "llm"),
+        "paypal_via": via,
         "dispute_id": dispute_id, "invoice_id": inv,
         "reason": get("reason"), "status_paypal": get("status"), "stage": get("stage"),
         "amount": get("amount"), "currency": get("currency"),

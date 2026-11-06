@@ -4,3 +4,6 @@ pydantic
 networkx
 fastapi
 uvicorn
+mcp
+numpy
+turbovec

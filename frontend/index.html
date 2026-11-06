@@ -126,6 +126,11 @@ label{color:var(--mute)}
       <div class="row"><input id="who" placeholder="Your name"><button id="send" onclick="submitPkg()">Approve &amp; send to PayPal</button></div>
       <div id="sendres" class="ans"></div>
     </div>
+    <div class="card"><h2><small>before / after</small>Manual vs DisputeGraph</h2>
+      <small style="color:var(--mute)">Time yourself checking this case by hand (open the docs, compare with PayPal), then stop.</small>
+      <div class="row" style="margin-top:8px"><button class="ghost" id="tbtn" onclick="timer()">&#9654; Start manual timer</button></div>
+      <div id="tres" class="ans"></div>
+    </div>
     <div class="card"><h2><small>pre-dispute</small>Refund mismatch sweep</h2><button class="ghost" onclick="sweep()">Run sweep across all cases</button><div id="sweep" class="ans"></div></div>
     <div class="card"><h2><small>provenance</small>Source</h2><div id="source"><small>Click a citation to see the exact API field or document line.</small></div></div>
   </div>
@@ -156,7 +161,7 @@ function render() {
     $('deadline').innerHTML = `<span class="pill ${days <= 3 ? 'CONTRADICTION' : days <= 7 ? 'VALUE_MISMATCH' : 'MATCH'}">Respond within ${days} day${days===1?'':'s'}</span>`;
   } else $('deadline').innerHTML = '<span class="pill MISSING">No deadline yet (inquiry)</span>';
   $('stats').innerHTML = [['Dispute', D.dispute_id], ['Reason', D.reason.replaceAll('_', ' ').toLowerCase()],
-    ['Amount', `${D.amount} ${D.currency}`], ['Invoice', D.invoice_id], ['PayPal status', D.status_paypal.replaceAll('_', ' ').toLowerCase()]]
+    ['Amount', `${D.amount} ${D.currency}`], ['Invoice', D.invoice_id], ['PayPal status', D.status_paypal.replaceAll('_', ' ').toLowerCase()], ['PayPal data via', D.paypal_via]]
     .map(([k, v]) => `<div class="stat"><small>${k}</small><b>${esc(v)}</b></div>`).join('');
 
   const rows = D.findings.map(f => ({verdict: f.verdict, check: f.check, note: f.note, paypal: f.paypal, merchant: f.merchant}));
@@ -226,6 +231,18 @@ async function submitPkg() {
   load(D.dispute_id);
 }
 
+let T0 = null;
+function fmt(ms) { if (ms < 1000) return Math.max(1, Math.round(ms)) + ' ms'; const s = ms / 1000; return s < 60 ? s.toFixed(1) + ' s' : Math.floor(s / 60) + ' min ' + Math.round(s % 60) + ' s'; }
+function timer() {
+  if (T0 === null) { T0 = performance.now(); $('tbtn').innerHTML = '&#9632; Stop &mdash; I finished checking'; $('tres').innerHTML = '<small>timing&hellip;</small>'; return; }
+  const manual = performance.now() - T0; T0 = null; $('tbtn').innerHTML = '&#9654; Start manual timer';
+  const tool = D.elapsed_ms;
+  try { localStorage.setItem('dg_manual_' + D.dispute_id, String(manual)); } catch (e) {}
+  $('tres').innerHTML = `<div class="stats"><div class="stat"><small>By hand</small><b>${fmt(manual)}</b></div>
+    <div class="stat"><small>DisputeGraph</small><b>${fmt(tool)}</b></div>
+    <div class="stat"><small>Faster by</small><b>${Math.max(1, Math.round(manual / Math.max(tool, 1)))}&times;</b></div></div>`;
+}
+
 async function askQ() {
   const r = await api(`/api/disputes/${D.dispute_id}/ask`, {question: $('q').value});
   const label = {answer:'Cited answer', dual_answer:'Sources disagree', clarify:'Which do you mean?', refusal:'Not enough evidence'}[r.kind];
@@ -233,6 +250,12 @@ async function askQ() {
   (r.contradictions || []).forEach(c => h += `<div class="req"><b>${esc(c.note)}</b><small>${esc(c.claims)}</small></div>`);
   if (r.clarify_options) h += r.clarify_options.map(o => `<button class="ghost" style="margin:3px" onclick="$('q').value='${o}';askQ()">${esc(o)}</button>`).join('');
   if (r.gaps) h += '<b>Missing:</b><ul>' + r.gaps.map(g => `<li>${esc(g)}</li>`).join('') + '</ul>';
+  if (r.evidence) {
+    const st = r.evidence.stats;
+    h += `<h3 style="font:400 20px var(--serif);margin:16px 0 4px">Supporting evidence</h3><small style="color:var(--mute)">TurboVec-HippoRAG &middot; ${st.chunks} chunks as 2-bit codes (${st.compression}&times; smaller than float32) &middot; ${st.entities} entities &middot; ${st.exact_edges} exact edges &middot; push-PPR &lambda;=${st.params.lambda} &middot; embeddings: ${esc(r.evidence.embed_source)}</small>`;
+    h += r.evidence.hits.map(x => `<div class="req"><span class="cite" data-ref="${esc(x.ref)}" data-ptr="${esc(x.pointer)}">${esc(x.doc)} &middot; ${esc(x.pointer)}</span>${esc(x.text)}
+      <small>score ${x.score} = 2-bit ${x.dense_2bit} + &lambda;&middot;PPR ${x.ppr}${x.via.length ? ' &middot; linked via ' + x.via.map(esc).join(', ') : ''}${x.graph_lifted ? ' &middot; <b style="color:var(--gold)">surfaced by the graph</b>' : ''}</small></div>`).join('');
+  }
   $('answer').innerHTML = h;
   load(D.dispute_id);
 }
