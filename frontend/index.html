@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DisputeGraph</title>
+<script src="https://cdn.jsdelivr.net/npm/ag-grid-community@32.3.3/dist/ag-grid-community.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070707;--ink:#f5f5f4;--mute:#a3a3a3;--line:rgba(255,255,255,.1);--glass:rgba(255,255,255,.04);
+--amber:#f5b041;--gold:#f7d26a;--rose:#f472b6;--ok:#4ade80;--warn:#fbbf24;--bad:#fb7185;--gap:#a3a3a3;
+--serif:"Instrument Serif",Georgia,serif;--mono:"Geist Mono",ui-monospace,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.55 var(--mono);min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+ background:radial-gradient(1200px 520px at 50% -8%,rgba(245,176,65,.28),transparent 65%),
+ radial-gradient(800px 400px at 85% 10%,rgba(244,114,182,.10),transparent 70%)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.55;
+ background-image:radial-gradient(1px 1px at 12% 18%,#fff,transparent),radial-gradient(1px 1px at 72% 12%,#fff,transparent),
+ radial-gradient(1px 1px at 38% 42%,#fff8,transparent),radial-gradient(1px 1px at 88% 58%,#fff8,transparent),
+ radial-gradient(1px 1px at 22% 76%,#fff6,transparent),radial-gradient(1px 1px at 58% 88%,#fff6,transparent),
+ radial-gradient(1px 1px at 5% 50%,#fff8,transparent),radial-gradient(1px 1px at 95% 30%,#fff,transparent)}
+.star{position:fixed;top:-10px;width:1px;height:90px;background:linear-gradient(transparent,#fff9);z-index:-1;
+ transform:rotate(25deg);animation:fall 7s linear infinite;opacity:0}
+.star:nth-child(1){left:12%}.star:nth-child(2){left:30%;animation-delay:2s}.star:nth-child(3){left:65%;animation-delay:4.5s}
+@keyframes fall{0%{opacity:0;transform:translate(0,0) rotate(25deg)}10%{opacity:1}60%{opacity:0;transform:translate(-260px,560px) rotate(25deg)}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.star,.ticker span{animation:none!important}}
+nav{position:sticky;top:0;z-index:10;display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:12px 28px;
+ background:rgba(7,7,7,.6);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.logo{font-weight:600;letter-spacing:-.02em}.logo b{color:var(--amber)}
+.chip{border:1px solid var(--line);background:var(--glass);border-radius:99px;padding:4px 12px;color:var(--mute);font-size:12px}
+select,input,textarea{font:inherit;color:var(--ink);background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:10px;padding:8px 10px;outline:none}
+select option{background:#111}
+input:focus,textarea:focus,select:focus{border-color:rgba(245,176,65,.6)}
+button{font:inherit;border:0;border-radius:10px;padding:8px 14px;cursor:pointer;color:#141414;font-weight:600;
+ background:linear-gradient(90deg,var(--gold),var(--amber));transition:transform .15s,box-shadow .15s}
+button:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(245,176,65,.25)}
+button.ghost{background:var(--glass);color:var(--ink);border:1px solid var(--line);font-weight:500}
+button:disabled{cursor:not-allowed;transform:none;box-shadow:none}
+.hero{padding:44px 28px 18px;max-width:1400px;margin:0 auto}
+.badge{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(245,176,65,.4);background:rgba(245,176,65,.08);
+ color:var(--gold);border-radius:99px;padding:4px 12px;font-size:12px}
+.badge i{width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 10px var(--amber)}
+.hero h1{font:400 clamp(40px,6.4vw,84px)/1 var(--serif);letter-spacing:-.03em;margin:18px 0 10px}
+.hero h1 em{background:linear-gradient(90deg,var(--gold),var(--amber) 45%,var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero h1 .dot{color:var(--amber)}
+.hero p{color:var(--mute);max-width:720px;margin:0}
+.ticker{border-block:1px solid var(--line);overflow:hidden;white-space:nowrap;color:var(--mute);font-size:11px;letter-spacing:.18em;padding:9px 0;margin:18px 0 0}
+.ticker span{display:inline-block;animation:tick 40s linear infinite}
+@keyframes tick{to{transform:translateX(-50%)}}
+.pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:500;border:1px solid}
+.MATCH,.READY_FOR_REVIEW{color:var(--ok);border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.08)}
+.VALUE_MISMATCH,.TIME_MISMATCH,.NEEDS_EVIDENCE{color:var(--warn);border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.08)}
+.CONTRADICTION,.ESCALATE_TO_HUMAN{color:var(--bad);border-color:rgba(251,113,133,.4);background:rgba(251,113,133,.08)}
+.MISSING,.UNSUPPORTED_CLAIM{color:var(--gap);border-color:var(--line);background:var(--glass)}
+main{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:18px;padding:22px 28px 40px;max-width:1400px;margin:0 auto}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:18px;backdrop-filter:blur(6px)}
+.card h2{font:400 26px/1.1 var(--serif);letter-spacing:-.01em;margin:0 0 14px;color:var(--ink)}
+.card h2 small{font:11px var(--mono);color:var(--mute);letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:6px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.stat{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:rgba(255,255,255,.02)}
+.stat small{color:var(--mute);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.stat b{display:block;font:400 22px/1.2 var(--serif);margin-top:4px;word-break:break-word}
+.bar{height:6px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin:10px 0 12px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--amber),var(--rose));border-radius:99px;transition:width .6s}
+.big{font:400 44px/1 var(--serif)}.big span{font:12px var(--mono);color:var(--mute)}
+ul.check{list-style:none;padding:0;margin:0}ul.check li{padding:4px 0;color:var(--mute)}ul.check li.on{color:var(--ink)}
+#grid{height:460px}
+.ag-theme-quartz-dark{--ag-background-color:transparent;--ag-header-background-color:rgba(255,255,255,.03);--ag-odd-row-background-color:rgba(255,255,255,.015);
+ --ag-border-color:rgba(255,255,255,.08);--ag-row-border-color:rgba(255,255,255,.06);--ag-foreground-color:#f5f5f4;--ag-header-foreground-color:#a3a3a3;
+ --ag-font-family:"Geist Mono",monospace;--ag-font-size:12px;--ag-row-hover-color:rgba(245,176,65,.06);--ag-wrapper-border-radius:12px}
+.cite{color:var(--gold);cursor:pointer;display:block;font-size:11.5px;word-break:break-all;line-height:1.5}
+.cite:hover{color:var(--amber);text-decoration:underline}
+pre{white-space:pre-wrap;background:rgba(0,0,0,.45);border:1px solid var(--line);border-radius:10px;padding:12px;margin:8px 0 0;font:11.5px/1.55 var(--mono);max-height:300px;overflow:auto;color:#e7e5e4}
+mark{background:rgba(245,176,65,.25);color:var(--gold);border-radius:3px}
+code{color:var(--gold)}
+.req{border-left:2px solid var(--amber);padding:6px 12px;margin:10px 0;background:rgba(245,176,65,.04);border-radius:0 8px 8px 0}
+.req small{color:var(--mute);display:block;margin-top:2px}
+.row{display:flex;gap:8px}.row input{flex:1;min-width:0}
+textarea{width:100%;min-height:110px;margin:8px 0}
+.ans{margin-top:12px}.ans .k{font:400 22px var(--serif);margin-right:8px}
+.audit{font-size:11.5px;color:var(--mute);max-height:220px;overflow:auto}.audit div{padding:3px 0;border-bottom:1px dashed var(--line)}.audit b{color:var(--ink);font-weight:500}
+label{color:var(--mute)}
+.foot{color:var(--mute);font-size:11px;text-align:center;padding:0 0 28px}
+@media(max-width:960px){main{grid-template-columns:1fr;padding:16px}.hero{padding:28px 16px 10px}nav{padding:10px 16px}}
+</style>
+</head>
+<body>
+<div class="star"></div><div class="star"></div><div class="star"></div>
+<nav>
+  <span class="logo">~/dispute<b>graph</b></span>
+  <span class="chip">&#10208; paypal-sandbox</span>
+  <select id="pick" aria-label="Dispute"></select>
+  <span id="status" class="pill"></span>
+  <span id="deadline"></span>
+  <span style="flex:1"></span>
+  <button class="ghost" onclick="resetCase()">&#8634; Reset demo</button>
+</nav>
+<section class="hero">
+  <span class="badge"><i></i>Sandbox data only &middot; merchant docs are SYNTHETIC &middot; nothing sent without human approval</span>
+  <h1>Two systems. Two truths. <em>One investigation</em><span class="dot">.</span></h1>
+  <p>DisputeGraph reconciles what PayPal recorded with what the merchant can prove, cites every fact back to its API field or document line, and refuses to guess.</p>
+  <div class="ticker"><span>PAYPAL GRAPH &middot; MERCHANT EVIDENCE &middot; RECONCILIATION &middot; CITED ANSWERS &middot; DUAL ANSWERS &middot; CLARIFY &middot; REFUSE &middot; HUMAN APPROVAL &middot; $0 BUDGET &middot; PAYPAL GRAPH &middot; MERCHANT EVIDENCE &middot; RECONCILIATION &middot; CITED ANSWERS &middot; DUAL ANSWERS &middot; CLARIFY &middot; REFUSE &middot; HUMAN APPROVAL &middot; $0 BUDGET &middot; PAYPAL GRAPH &middot; MERCHANT EVIDENCE &middot; RECONCILIATION &middot; CITED ANSWERS &middot; DUAL ANSWERS &middot; CLARIFY &middot; REFUSE &middot; HUMAN APPROVAL &middot; $0 BUDGET &middot; PAYPAL GRAPH &middot; MERCHANT EVIDENCE &middot; RECONCILIATION &middot; CITED ANSWERS &middot; DUAL ANSWERS &middot; CLARIFY &middot; REFUSE &middot; HUMAN APPROVAL &middot; $0 BUDGET &middot; </span></div>
+</section>
+<main>
+  <div>
+    <div class="card"><h2><small>01 &middot; case</small>The dispute</h2><div class="stats" id="stats"></div></div>
+    <div class="card"><h2><small>ai summary &middot; every sentence linked to a finding</small>In plain English</h2><div id="summary"></div></div>
+    <div class="card"><h2><small>02 &middot; reconciliation</small>PayPal record vs merchant evidence</h2><div id="grid" class="ag-theme-quartz-dark"></div></div>
+    <div class="card"><h2><small>03 &middot; assessment gate</small>Ask about this dispute</h2>
+      <div class="row"><input id="q" placeholder="e.g. Was the laptop delivered?"><button onclick="askQ()">Ask</button></div>
+      <div id="answer" class="ans"></div>
+    </div>
+    <div class="card"><h2><small>04 &middot; trace</small>Audit log</h2><div class="audit" id="audit"></div></div>
+  </div>
+  <div>
+    <div class="card"><h2><small>item not received</small>Evidence strength</h2><div id="strength"></div></div>
+    <div class="card"><h2><small>investigator</small>What we still need</h2><div id="reqs"></div>
+      <textarea id="evtext" placeholder="Paste new evidence text (e.g. updated carrier tracking)"></textarea>
+      <div class="row"><input id="evname" value="UPS tracking update"><button onclick="upload()">Add evidence</button></div>
+      <button class="ghost" style="margin-top:8px" onclick="sample()">Load sample carrier update</button>
+    </div>
+    <div class="card"><h2><small>human in the loop</small>Approve &amp; send</h2><div id="pkg"></div>
+      <label style="display:block;margin:8px 0"><input type="checkbox" id="ok"> I reviewed this package</label>
+      <div class="row"><input id="who" placeholder="Your name"><button id="send" onclick="submitPkg()">Approve &amp; send to PayPal</button></div>
+      <div id="sendres" class="ans"></div>
+    </div>
+    <div class="card"><h2><small>pre-dispute</small>Refund mismatch sweep</h2><button class="ghost" onclick="sweep()">Run sweep across all cases</button><div id="sweep" class="ans"></div></div>
+    <div class="card"><h2><small>provenance</small>Source</h2><div id="source"><small>Click a citation to see the exact API field or document line.</small></div></div>
+  </div>
+</main>
+<div class="foot">DisputeGraph &middot; PayPal AI Hackathon &middot; built on a $0 budget</div>
+<script>
+let D = null, grid = null;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const api = (p, body) => fetch(p, body ? {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)} : {})
+  .then(r => r.ok ? r.json() : r.text().then(t => {throw new Error(t)}));
+
+function el(p) { const d = document.createElement('div'); d.innerHTML = cites(p.data[p.colDef.field] || []); return d; }
+function cites(facts) {
+  return facts.map(f => `<span class="cite" data-ref="${esc(f.source.ref)}" data-ptr="${esc(f.source.pointer)}">${esc(f.source.side)}: ${esc(f.value && typeof f.value==='object' ? JSON.stringify(f.value) : f.value)}</span>`).join('');
+}
+
+async function load(id) {
+  D = await api('/api/disputes/' + encodeURIComponent(id));
+  render();
+}
+
+function render() {
+  $('status').className = 'pill ' + D.status;
+  $('status').textContent = D.status.replaceAll('_', ' ') + ` · round ${D.round}/${D.max_rounds}`;
+  if (D.deadline) {
+    const days = Math.ceil((new Date(D.deadline) - new Date()) / 864e5);
+    $('deadline').innerHTML = `<span class="pill ${days <= 3 ? 'CONTRADICTION' : days <= 7 ? 'VALUE_MISMATCH' : 'MATCH'}">Respond within ${days} day${days===1?'':'s'}</span>`;
+  } else $('deadline').innerHTML = '<span class="pill MISSING">No deadline yet (inquiry)</span>';
+  $('stats').innerHTML = [['Dispute', D.dispute_id], ['Reason', D.reason.replaceAll('_', ' ').toLowerCase()],
+    ['Amount', `${D.amount} ${D.currency}`], ['Invoice', D.invoice_id], ['PayPal status', D.status_paypal.replaceAll('_', ' ').toLowerCase()]]
+    .map(([k, v]) => `<div class="stat"><small>${k}</small><b>${esc(v)}</b></div>`).join('');
+
+  const rows = D.findings.map(f => ({verdict: f.verdict, check: f.check, note: f.note, paypal: f.paypal, merchant: f.merchant}));
+  const cols = [
+    {field:'verdict', width:170, cellRenderer: p => `<span class="pill ${p.value}">${p.value.replaceAll('_',' ')}</span>`},
+    {field:'check', width:120, minWidth:110},
+    {field:'note', flex:2, minWidth:220, wrapText:true, autoHeight:true},
+    {field:'paypal', headerName:'PayPal says', flex:1, minWidth:160, wrapText:true, autoHeight:true, cellRenderer: p => el(p), cellDataType: false},
+    {field:'merchant', headerName:'Merchant says', flex:1, minWidth:160, wrapText:true, autoHeight:true, cellRenderer: p => el(p), cellDataType: false},
+  ];
+  if (grid) grid.setGridOption('rowData', rows);
+  else grid = agGrid.createGrid($('grid'), {rowData: rows, columnDefs: cols, suppressColumnVirtualisation: true, defaultColDef:{sortable:true, filter:true, resizable:true}});
+  // autoHeight cells can paint before custom renderers attach; force one refresh
+  setTimeout(() => { grid.refreshCells({force: true}); setTimeout(() => grid.resetRowHeights(), 50); }, 0);
+
+  const met = D.strength.filter(s => s.met).length;
+  $('strength').innerHTML = `<div class="big">${met}<span> / ${D.strength.length} items PayPal looks for</span></div>
+    <div class="bar"><i style="width:${100*met/D.strength.length}%"></i></div>
+    <ul class="check">${D.strength.map(s => `<li class="${s.met ? 'on' : ''}">${s.met ? '✦' : '○'} ${esc(s.item)}</li>`).join('')}</ul>`;
+  $('reqs').innerHTML = D.requests.length ? D.requests.map(r =>
+    `<div class="req"><b>${esc(r.ask)}</b><small>${esc(r.why)}</small></div>`).join('')
+    : '<small>No open requests. Ready for human review.</small>';
+  $('audit').innerHTML = D.audit.slice().reverse().map(a =>
+    `<div>${esc(a.time.slice(11,19))} · <b>${esc(a.agent)}</b> ${esc(a.action)} ${esc(a.detail)}</div>`).join('');
+  const sm = D.summary;
+  $('summary').innerHTML = sm.sentences.map(x => `<p style="margin:0 0 8px">${esc(x.text)} ${x.findings.map(i =>
+    `<span class="pill ${D.findings[i].verdict}" style="cursor:pointer" onclick="jump(${i})">F${i}</span>`).join(' ')}</p>`).join('')
+    + `<small style="color:var(--mute)">written by: ${esc(sm.source)}${sm.dropped ? ` &middot; ${sm.dropped} unsupported sentence(s) removed` : ''}
+       &middot; investigated in ${D.elapsed_ms} ms${D.llm_facts ? ` &middot; ${D.llm_facts} fact(s) read by the LLM` : ''}</small>`;
+  loadPkg();
+}
+function jump(i) { grid.ensureIndexVisible(i, 'middle'); grid.flashCells({rowNodes: [grid.getDisplayedRowAtIndex(i)]}); }
+async function sweep() {
+  $('sweep').innerHTML = '<small>sweeping...</small>';
+  const r = await api('/api/sweep');
+  $('sweep').innerHTML = r.length ? r.map(x => `<div class="req"><span class="pill ${x.verdict}">${x.verdict.replaceAll('_',' ')}</span>
+    <b>${esc(x.dispute_id)}</b><small>${esc(x.note)}</small></div>`).join('') : '<small>No refund mismatches found.</small>';
+}
+
+document.addEventListener('click', async e => {
+  const c = e.target.closest('.cite'); if (!c) return;
+  const s = await api(`/api/source?ref=${encodeURIComponent(c.dataset.ref)}&pointer=${encodeURIComponent(c.dataset.ptr)}`);
+  if (s.side === 'paypal') {
+    $('source').innerHTML = `<small>PayPal API · <code>${esc(s.ref)}</code> · <code>${esc(s.pointer)}</code></small><pre>${esc(JSON.stringify(s.value, null, 2))}</pre>`;
+  } else {
+    const m = /page (\d+), line (\d+)/.exec(s.pointer); const pages = s.text.split(/^--- page \d+ ---$/m);
+    const lines = (pages[m ? +m[1] : 1] || '').trim().split('\n');
+    $('source').innerHTML = `<small>Merchant doc · <code>${esc(s.ref)}</code> · ${esc(s.pointer)}</small><pre>${
+      lines.map((l, i) => m && i + 1 === +m[2] ? `<mark>${esc(l)}</mark>` : esc(l)).join('\n')}</pre>`;
+  }
+});
+
+async function loadPkg() {
+  const p = await api(`/api/disputes/${D.dispute_id}/package`);
+  $('send').disabled = !p.ready; $('send').style.opacity = p.ready ? 1 : .5;
+  $('pkg').innerHTML = (p.ready ? '<span class="pill MATCH">Ready to send</span>' : '<span class="pill CONTRADICTION">Blocked</span>')
+    + (p.blockers.length ? '<ul>' + p.blockers.map(b => `<li>${esc(b)}</li>`).join('') + '</ul>' : '')
+    + (p.warnings.length ? '<b>Not included (unresolved):</b><ul>' + p.warnings.map(w => `<li>${esc(w)}</li>`).join('') + '</ul>' : '')
+    + `<pre>${esc(JSON.stringify(p.request, null, 2))}</pre>`;
+}
+async function submitPkg() {
+  if (!$('ok').checked || !$('who').value.trim()) { $('sendres').textContent = 'Tick the review box and enter your name first.'; return; }
+  const r = await api(`/api/disputes/${D.dispute_id}/submit`, {approved_by: $('who').value, confirm: true});
+  $('sendres').innerHTML = r.submitted ? `<span class="pill MATCH">Sent to PayPal (HTTP ${r.status})</span>`
+    : r.dry_run ? `<span class="pill VALUE_MISMATCH">Demo mode: request prepared, not sent</span> <code>POST ${esc(r.path)}</code>`
+    : `<span class="pill CONTRADICTION">Not sent</span> <pre>${esc(JSON.stringify(r.response || r.blockers, null, 2))}</pre>`;
+  load(D.dispute_id);
+}
+
+async function askQ() {
+  const r = await api(`/api/disputes/${D.dispute_id}/ask`, {question: $('q').value});
+  const label = {answer:'Cited answer', dual_answer:'Sources disagree', clarify:'Which do you mean?', refusal:'Not enough evidence'}[r.kind];
+  let h = `<div><span class="k">${label}</span> ${r.band ? `<span class="pill ${r.band==='high'?'MATCH':r.band==='hedge'?'VALUE_MISMATCH':'CONTRADICTION'}">${r.band} · ${r.confidence}</span>` : ''}</div><p>${esc(r.text)}</p>`;
+  (r.contradictions || []).forEach(c => h += `<div class="req"><b>${esc(c.note)}</b><small>${esc(c.claims)}</small></div>`);
+  if (r.clarify_options) h += r.clarify_options.map(o => `<button class="ghost" style="margin:3px" onclick="$('q').value='${o}';askQ()">${esc(o)}</button>`).join('');
+  if (r.gaps) h += '<b>Missing:</b><ul>' + r.gaps.map(g => `<li>${esc(g)}</li>`).join('') + '</ul>';
+  $('answer').innerHTML = h;
+  load(D.dispute_id);
+}
+
+async function upload() {
+  const r = await api(`/api/disputes/${D.dispute_id}/evidence`, {name: $('evname').value, text: $('evtext').value});
+  D = r.investigation; $('evtext').value = ''; render();
+}
+function sample() {
+  $('evname').value = 'UPS tracking update';
+  $('evtext').value = 'SYNTHETIC DEMO DOCUMENT - not a real carrier record\nUPS TRACKING UPDATE\nTracking: 1Z999AA10123456784\nShip To: SAN JOSE, CA 95131\n\nScan history:\n2026-11-07 09:12  Arrival Scan - San Jose, CA\n2026-11-07 15:47  Delivered - Front Door\nCurrent Status: Delivered';
+}
+async function resetCase() { await api(`/api/disputes/${D.dispute_id}/reset`, {}); load(D.dispute_id); $('answer').innerHTML=''; }
+
+api('/api/disputes').then(list => {
+  $('pick').innerHTML = list.map(d => `<option value="${esc(d.dispute_id)}">${esc(d.dispute_id)} &middot; ${d.synthetic ? 'synthetic' : 'sandbox'} &middot; $${esc(d.amount)}</option>`).join('');
+  $('pick').onchange = e => load(e.target.value);
+  if (list.length) load(list[0].dispute_id);
+});
+</script>
+</body>
+</html>

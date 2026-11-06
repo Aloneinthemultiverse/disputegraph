@@ -1,0 +1,33 @@
+{
+  "id": "DEMOORDER0005",
+  "status": "COMPLETED",
+  "create_time": "2026-10-29T09:00:00Z",
+  "_synthetic": true,
+  "payer": {
+    "payer_id": "DEMOPAYER0005"
+  },
+  "purchase_units": [
+    {
+      "invoice_id": "INV-DEMO0005",
+      "custom_id": "ORDER-E0005",
+      "description": "Desk lamp (SYNTHETIC)",
+      "shipping": {
+        "address": {
+          "address_line_1": "9 Elm Ct",
+          "admin_area_2": "Denver",
+          "admin_area_1": "CO",
+          "postal_code": "80202",
+          "country_code": "US"
+        }
+      },
+      "payments": {
+        "captures": [
+          {
+            "id": "DEMOCAP0005"
+          }
+        ],
+        "refunds": []
+      }
+    }
+  ]
+}

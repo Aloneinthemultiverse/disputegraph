@@ -17,7 +17,7 @@ Verdict = Literal["MATCH", "VALUE_MISMATCH", "TIME_MISMATCH", "MISSING",
                   "UNSUPPORTED_CLAIM", "CONTRADICTION"]
 
 # Merchant docs that are third-party records vs the merchant's own claims.
-RECORD_DOCS = {"merchant:courier_tracking"}
+RECORD_DOCS = {"merchant:courier_tracking", "merchant:uploaded_courier_tracking_update"}
 CLAIM_DOCS = {"merchant:order_sheet", "merchant:emails"}
 
 
@@ -102,7 +102,8 @@ def check_delivery(pp, mc) -> list[Finding]:
 
 def check_timeline(pp, mc) -> list[Finding]:
     cap = _pick(pp, "captured_at")
-    shipped = _pick(mc, "shipped_at")
+    shipped = [s for s in _pick(mc, "shipped_at")
+               if len(str(s.value)) == 10 and str(s.value)[4] == "-"]  # dates only ("Shipped: no" is not one)
     if not cap or not shipped:
         return [Finding(check="timeline", verdict="MISSING", paypal=cap, merchant=shipped,
                         note="capture time or ship date missing")]
@@ -134,7 +135,12 @@ def check_ship_to(pp, mc) -> list[Finding]:
 
 def check_refunds(pp, mc) -> list[Finding]:
     refunds = [f for f in pp if f.entity.startswith("refund:") and f.field == "amount"]
+    claims = _pick(mc, "refund_claim")
     if not refunds:
+        if claims:  # merchant says refunded, PayPal has no refund on this order
+            return [Finding(check="refund", verdict="UNSUPPORTED_CLAIM", merchant=claims,
+                            note="merchant says the buyer was refunded, but PayPal shows no refund "
+                                 "on this order")]
         return []
     m = [f for f in mc if "refund" in f.field or "refund" in str(f.value).lower()]
     return [Finding(check="refund", verdict="MATCH" if m else "MISSING", paypal=refunds, merchant=m,

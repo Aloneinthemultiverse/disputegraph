@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "disputegraph",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "uvicorn", "backend.app:app", "--port", "8000"],
+      "env": {"DEMO_MODE": "1"},
+      "port": 8000
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+# Render free tier: demo mode, no secrets needed. First load after idle takes ~1 min.
+services:
+  - type: web
+    name: disputegraph
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m uvicorn backend.app:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DEMO_MODE
+        value: "1"

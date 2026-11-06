@@ -17,6 +17,7 @@ import re
 from collections import Counter
 from pathlib import Path
 
+from .llm import classify_claim
 from .model import Fact, Source
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -40,7 +41,11 @@ DATE = re.compile(r"^Date:\s*(\d{4}-\d{2}-\d{2})", re.M)
 CLAIMS = [  # free-text claims in emails / notes
     (re.compile(r"\b(was|were|has been|marked) delivered\b", re.I), "delivery_status", "Delivered"),
     (re.compile(r"\bshipped (today|on)\b", re.I), "shipped_claim", "Shipped"),
+    (re.compile(r"\b(have|has|was|were) (been )?refunded\b|\bissued (a|the|your) refund\b", re.I),
+     "refund_claim", "Refunded"),
 ]
+LLM_FIELD = {"DELIVERED": ("delivery_status", "Delivered"), "SHIPPED": ("shipped_claim", "Shipped"),
+             "REFUNDED": ("refund_claim", "Refunded")}
 AMOUNT = re.compile(r"([\d,]+\.\d{2})")
 
 
@@ -62,9 +67,9 @@ def _norm(field: str, value: str):
     return value
 
 
-def extract(invoice_id: str) -> list[Fact]:
+def extract(invoice_id: str, pages: list[dict] | None = None) -> list[Fact]:
     facts: list[Fact] = []
-    for p in load_pages(invoice_id):
+    for p in (pages if pages is not None else load_pages(invoice_id)):
         ent = f"merchant:{p['doc']}"
         ref = f"{invoice_id}/{p['doc']}.md"
         dated = DATE.search(p["text"])
@@ -84,10 +89,16 @@ def extract(invoice_id: str) -> list[Fact]:
                                           observed_at=at, source=src))
                         break
                 continue
+            hit = False
             for pat, field, val in CLAIMS:
                 if pat.search(line):
+                    hit = True
                     facts.append(Fact(entity=ent, field=field, value=val,
                                       observed_at=at, source=src))
+            if not hit and (word := classify_claim(line)):  # fuzzy wording -> LLM
+                field, val = LLM_FIELD[word]
+                facts.append(Fact(entity=ent, field=field, value=val, observed_at=at,
+                                  source=src, method="llm"))
     return facts
 
 

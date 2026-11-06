@@ -1,0 +1,31 @@
+{
+  "dispute_id": "PP-D-DEMO-0002",
+  "create_time": "2026-10-20T12:00:00Z",
+  "update_time": "2026-10-20T12:00:00Z",
+  "reason": "MERCHANDISE_OR_SERVICE_NOT_RECEIVED",
+  "status": "WAITING_FOR_SELLER_RESPONSE",
+  "dispute_life_cycle_stage": "INQUIRY",
+  "dispute_amount": {
+    "currency_code": "USD",
+    "value": "129.99"
+  },
+  "seller_response_due_date": "2026-11-10T10:00:00Z",
+  "messages": [
+    {
+      "posted_by": "BUYER",
+      "time_posted": "2026-10-20T12:00:00Z",
+      "content": "I never received the wireless headphones. (SYNTHETIC)"
+    }
+  ],
+  "disputed_transactions": [
+    {
+      "seller_transaction_id": "DEMOCAP0002",
+      "buyer_transaction_id": "BUY0002",
+      "invoice_number": "INV-DEMO0002",
+      "custom": "ORDER-B0002",
+      "transaction_status": "COMPLETED"
+    }
+  ],
+  "links": [],
+  "_synthetic": true
+}

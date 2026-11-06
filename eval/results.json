@@ -1,0 +1,247 @@
+{
+ "cases": 20,
+ "seed": 7,
+ "disputegraph": {
+  "precision": 1.0,
+  "recall": 1.0,
+  "false_alarms": 0,
+  "missed": 0,
+  "exact_cases": "20/20",
+  "avg_ms": 0.2
+ },
+ "baseline": "skipped (no LLM key configured)",
+ "rows": [
+  {
+   "id": 1,
+   "planted": [
+    "delivery_contradiction",
+    "false_refund_claim"
+   ],
+   "disputegraph": [
+    "delivery_contradiction",
+    "false_refund_claim"
+   ],
+   "disputegraph_ms": 1.147999952081591,
+   "baseline": null,
+   "baseline_ms": 0.1702000154182315
+  },
+  {
+   "id": 2,
+   "planted": [
+    "amount_mismatch",
+    "delivery_unsupported",
+    "early_ship",
+    "false_refund_claim"
+   ],
+   "disputegraph": [
+    "amount_mismatch",
+    "delivery_unsupported",
+    "early_ship",
+    "false_refund_claim"
+   ],
+   "disputegraph_ms": 0.21620001643896103,
+   "baseline": null,
+   "baseline_ms": 0.000300002284348011
+  },
+  {
+   "id": 3,
+   "planted": [
+    "delivery_unsupported",
+    "false_refund_claim"
+   ],
+   "disputegraph": [
+    "delivery_unsupported",
+    "false_refund_claim"
+   ],
+   "disputegraph_ms": 0.1846999512054026,
+   "baseline": null,
+   "baseline_ms": 0.000200001522898674
+  },
+  {
+   "id": 4,
+   "planted": [
+    "false_refund_claim"
+   ],
+   "disputegraph": [
+    "false_refund_claim"
+   ],
+   "disputegraph_ms": 0.2172000240534544,
+   "baseline": null,
+   "baseline_ms": 0.000200001522898674
+  },
+  {
+   "id": 5,
+   "planted": [],
+   "disputegraph": [],
+   "disputegraph_ms": 0.19530003191903234,
+   "baseline": null,
+   "baseline_ms": 0.000100000761449337
+  },
+  {
+   "id": 6,
+   "planted": [
+    "amount_mismatch",
+    "delivery_contradiction",
+    "false_refund_claim"
+   ],
+   "disputegraph": [
+    "amount_mismatch",
+    "delivery_contradiction",
+    "false_refund_claim"
+   ],
+   "disputegraph_ms": 0.20009995205327868,
+   "baseline": null,
+   "baseline_ms": 0.000100000761449337
+  },
+  {
+   "id": 7,
+   "planted": [
+    "delivery_contradiction",
+    "false_refund_claim"
+   ],
+   "disputegraph": [
+    "delivery_contradiction",
+    "false_refund_claim"
+   ],
+   "disputegraph_ms": 0.21769996965304017,
+   "baseline": null,
+   "baseline_ms": 0.000200001522898674
+  },
+  {
+   "id": 8,
+   "planted": [],
+   "disputegraph": [],
+   "disputegraph_ms": 0.172999978531152,
+   "baseline": null,
+   "baseline_ms": 0.000100000761449337
+  },
+  {
+   "id": 9,
+   "planted": [],
+   "disputegraph": [],
+   "disputegraph_ms": 0.1778999576345086,
+   "baseline": null,
+   "baseline_ms": 0.000100000761449337
+  },
+  {
+   "id": 10,
+   "planted": [],
+   "disputegraph": [],
+   "disputegraph_ms": 0.1734999823383987,
+   "baseline": null,
+   "baseline_ms": 0.000100000761449337
+  },
+  {
+   "id": 11,
+   "planted": [
+    "amount_mismatch",
+    "delivery_unsupported"
+   ],
+   "disputegraph": [
+    "amount_mismatch",
+    "delivery_unsupported"
+   ],
+   "disputegraph_ms": 0.13350002700462937,
+   "baseline": null,
+   "baseline_ms": 0.000100000761449337
+  },
+  {
+   "id": 12,
+   "planted": [],
+   "disputegraph": [],
+   "disputegraph_ms": 0.17380004283040762,
+   "baseline": null,
+   "baseline_ms": 0.000100000761449337
+  },
+  {
+   "id": 13,
+   "planted": [
+    "delivery_contradiction",
+    "false_refund_claim"
+   ],
+   "disputegraph": [
+    "delivery_contradiction",
+    "false_refund_claim"
+   ],
+   "disputegraph_ms": 0.18989999080076814,
+   "baseline": null,
+   "baseline_ms": 0.000100000761449337
+  },
+  {
+   "id": 14,
+   "planted": [],
+   "disputegraph": [],
+   "disputegraph_ms": 0.26130001060664654,
+   "baseline": null,
+   "baseline_ms": 0.000200001522898674
+  },
+  {
+   "id": 15,
+   "planted": [
+    "false_refund_claim"
+   ],
+   "disputegraph": [
+    "false_refund_claim"
+   ],
+   "disputegraph_ms": 0.20870001753792167,
+   "baseline": null,
+   "baseline_ms": 0.000100000761449337
+  },
+  {
+   "id": 16,
+   "planted": [
+    "amount_mismatch"
+   ],
+   "disputegraph": [
+    "amount_mismatch"
+   ],
+   "disputegraph_ms": 0.2970999921672046,
+   "baseline": null,
+   "baseline_ms": 0.000100000761449337
+  },
+  {
+   "id": 17,
+   "planted": [],
+   "disputegraph": [],
+   "disputegraph_ms": 0.22119999630376697,
+   "baseline": null,
+   "baseline_ms": 0.000100000761449337
+  },
+  {
+   "id": 18,
+   "planted": [
+    "amount_mismatch",
+    "delivery_contradiction"
+   ],
+   "disputegraph": [
+    "amount_mismatch",
+    "delivery_contradiction"
+   ],
+   "disputegraph_ms": 0.19399996381253004,
+   "baseline": null,
+   "baseline_ms": 0.000100000761449337
+  },
+  {
+   "id": 19,
+   "planted": [
+    "amount_mismatch",
+    "early_ship"
+   ],
+   "disputegraph": [
+    "amount_mismatch",
+    "early_ship"
+   ],
+   "disputegraph_ms": 0.18839997937902808,
+   "baseline": null,
+   "baseline_ms": 0.000200001522898674
+  },
+  {
+   "id": 20,
+   "planted": [],
+   "disputegraph": [],
+   "disputegraph_ms": 0.18510001245886087,
+   "baseline": null,
+   "baseline_ms": 0.000100000761449337
+  }
+ ]
+}

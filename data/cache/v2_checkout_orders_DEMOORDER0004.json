@@ -1,0 +1,33 @@
+{
+  "id": "DEMOORDER0004",
+  "status": "COMPLETED",
+  "create_time": "2026-10-28T09:00:00Z",
+  "_synthetic": true,
+  "payer": {
+    "payer_id": "DEMOPAYER0004"
+  },
+  "purchase_units": [
+    {
+      "invoice_id": "INV-DEMO0004",
+      "custom_id": "ORDER-D0004",
+      "description": "Mirrorless camera (SYNTHETIC)",
+      "shipping": {
+        "address": {
+          "address_line_1": "5 Bay Rd",
+          "admin_area_2": "Seattle",
+          "admin_area_1": "WA",
+          "postal_code": "98101",
+          "country_code": "US"
+        }
+      },
+      "payments": {
+        "captures": [
+          {
+            "id": "DEMOCAP0004"
+          }
+        ],
+        "refunds": []
+      }
+    }
+  ]
+}

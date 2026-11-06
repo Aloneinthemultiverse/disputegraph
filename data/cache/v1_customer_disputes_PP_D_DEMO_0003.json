@@ -1,0 +1,31 @@
+{
+  "dispute_id": "PP-D-DEMO-0003",
+  "create_time": "2026-10-25T12:00:00Z",
+  "update_time": "2026-10-25T12:00:00Z",
+  "reason": "MERCHANDISE_OR_SERVICE_NOT_RECEIVED",
+  "status": "WAITING_FOR_SELLER_RESPONSE",
+  "dispute_life_cycle_stage": "INQUIRY",
+  "dispute_amount": {
+    "currency_code": "USD",
+    "value": "89.00"
+  },
+  "seller_response_due_date": "2026-11-15T10:00:00Z",
+  "messages": [
+    {
+      "posted_by": "BUYER",
+      "time_posted": "2026-10-25T12:00:00Z",
+      "content": "I never received the running shoes. (SYNTHETIC)"
+    }
+  ],
+  "disputed_transactions": [
+    {
+      "seller_transaction_id": "DEMOCAP0003",
+      "buyer_transaction_id": "BUY0003",
+      "invoice_number": "INV-DEMO0003",
+      "custom": "ORDER-C0003",
+      "transaction_status": "COMPLETED"
+    }
+  ],
+  "links": [],
+  "_synthetic": true
+}

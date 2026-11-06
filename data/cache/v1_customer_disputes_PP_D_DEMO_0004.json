@@ -1,0 +1,31 @@
+{
+  "dispute_id": "PP-D-DEMO-0004",
+  "create_time": "2026-10-28T12:00:00Z",
+  "update_time": "2026-10-28T12:00:00Z",
+  "reason": "MERCHANDISE_OR_SERVICE_NOT_RECEIVED",
+  "status": "WAITING_FOR_SELLER_RESPONSE",
+  "dispute_life_cycle_stage": "INQUIRY",
+  "dispute_amount": {
+    "currency_code": "USD",
+    "value": "420.00"
+  },
+  "seller_response_due_date": "2026-11-18T10:00:00Z",
+  "messages": [
+    {
+      "posted_by": "BUYER",
+      "time_posted": "2026-10-28T12:00:00Z",
+      "content": "I never received the mirrorless camera. (SYNTHETIC)"
+    }
+  ],
+  "disputed_transactions": [
+    {
+      "seller_transaction_id": "DEMOCAP0004",
+      "buyer_transaction_id": "BUY0004",
+      "invoice_number": "INV-DEMO0004",
+      "custom": "ORDER-D0004",
+      "transaction_status": "COMPLETED"
+    }
+  ],
+  "links": [],
+  "_synthetic": true
+}

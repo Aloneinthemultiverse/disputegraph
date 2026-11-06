@@ -24,6 +24,7 @@ class Fact(BaseModel):
     value: Any
     source: Source
     observed_at: str | None = None   # timestamp the source attaches to the value
+    method: str = "rule"             # rule | api | llm (how the fact was extracted)
 
     def cite(self) -> str:
         return f"{self.source.side}:{self.source.ref}#{self.source.pointer}"

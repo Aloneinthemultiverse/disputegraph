@@ -1,0 +1,18 @@
+{
+  "id": "DEMOCAP0002",
+  "status": "COMPLETED",
+  "amount": {
+    "currency_code": "USD",
+    "value": "129.99"
+  },
+  "invoice_id": "INV-DEMO0002",
+  "custom_id": "ORDER-B0002",
+  "create_time": "2026-10-20T09:00:00Z",
+  "_synthetic": true,
+  "links": [
+    {
+      "rel": "up",
+      "href": "https://api.sandbox.paypal.com/v2/checkout/orders/DEMOORDER0002"
+    }
+  ]
+}

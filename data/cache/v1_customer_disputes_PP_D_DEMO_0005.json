@@ -1,0 +1,31 @@
+{
+  "dispute_id": "PP-D-DEMO-0005",
+  "create_time": "2026-10-29T12:00:00Z",
+  "update_time": "2026-10-29T12:00:00Z",
+  "reason": "MERCHANDISE_OR_SERVICE_NOT_RECEIVED",
+  "status": "WAITING_FOR_SELLER_RESPONSE",
+  "dispute_life_cycle_stage": "INQUIRY",
+  "dispute_amount": {
+    "currency_code": "USD",
+    "value": "45.50"
+  },
+  "seller_response_due_date": "2026-11-19T10:00:00Z",
+  "messages": [
+    {
+      "posted_by": "BUYER",
+      "time_posted": "2026-10-29T12:00:00Z",
+      "content": "I never received the desk lamp. (SYNTHETIC)"
+    }
+  ],
+  "disputed_transactions": [
+    {
+      "seller_transaction_id": "DEMOCAP0005",
+      "buyer_transaction_id": "BUY0005",
+      "invoice_number": "INV-DEMO0005",
+      "custom": "ORDER-E0005",
+      "transaction_status": "COMPLETED"
+    }
+  ],
+  "links": [],
+  "_synthetic": true
+}
