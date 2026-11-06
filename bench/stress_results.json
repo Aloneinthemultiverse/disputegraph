@@ -1,0 +1,400 @@
+{
+ "fuzz": {
+  "inputs": 52,
+  "crashes": [],
+  "slowest_ms": 744.3,
+  "detail": {
+   "empty_docs": {
+    "ok": true,
+    "ms": 0.2,
+    "findings": 6
+   },
+   "empty_strings": {
+    "ok": true,
+    "ms": 0.3,
+    "findings": 6
+   },
+   "binary_junk": {
+    "ok": true,
+    "ms": 7.4,
+    "findings": 6
+   },
+   "5mb_doc": {
+    "ok": true,
+    "ms": 744.3,
+    "findings": 25005
+   },
+   "20k_lines": {
+    "ok": true,
+    "ms": 204.4,
+    "findings": 6
+   },
+   "regex_bomb": {
+    "ok": true,
+    "ms": 209.2,
+    "findings": 6
+   },
+   "unicode": {
+    "ok": true,
+    "ms": 0.4,
+    "findings": 6
+   },
+   "null_bytes": {
+    "ok": true,
+    "ms": 0.2,
+    "findings": 6
+   },
+   "weird_numbers": {
+    "ok": true,
+    "ms": 0.2,
+    "findings": 9
+   },
+   "bad_dates": {
+    "ok": true,
+    "ms": 1.0,
+    "findings": 7
+   },
+   "missing_paypal_fields": {
+    "ok": true,
+    "ms": 0.2,
+    "findings": 6
+   },
+   "injection_everywhere": {
+    "ok": true,
+    "ms": 3.4,
+    "findings": 6
+   },
+   "mutation_0": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_1": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_2": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_3": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_4": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_5": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_6": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_7": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_8": {
+    "ok": true,
+    "ms": 0.3,
+    "findings": 6
+   },
+   "mutation_9": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_10": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_11": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_12": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_13": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_14": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_15": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_16": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_17": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_18": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_19": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_20": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_21": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_22": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_23": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_24": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_25": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_26": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_27": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_28": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_29": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_30": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_31": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_32": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_33": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_34": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_35": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_36": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_37": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_38": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   },
+   "mutation_39": {
+    "ok": true,
+    "ms": 0.1,
+    "findings": 6
+   }
+  }
+ },
+ "parallel": {
+  "cases": 3000,
+  "threads": 64,
+  "seconds": 1.56,
+  "cases_per_s": 1929.2,
+  "errors": 0,
+  "results_differ_from_serial": 0
+ },
+ "http": {
+  "requests": 3000,
+  "concurrency": 64,
+  "seconds": 33.5,
+  "req_per_s": 89.5,
+  "p50_ms": 558.8,
+  "p95_ms": 1422.7,
+  "p99_ms": 3444.1,
+  "server_errors_or_dropped": 0,
+  "attacks_not_refused": 0,
+  "by_endpoint": {
+   "list": {
+    "n": 599,
+    "codes": {
+     "200": 599
+    },
+    "p50_ms": 521.4,
+    "p95_ms": 1126.4,
+    "p99_ms": 3189.9
+   },
+   "source": {
+    "n": 163,
+    "codes": {
+     "200": 163
+    },
+    "p50_ms": 450.0,
+    "p95_ms": 890.4,
+    "p99_ms": 1851.7
+   },
+   "attack_submit_unapproved": {
+    "n": 50,
+    "codes": {
+     "400": 50
+    },
+    "p50_ms": 679.2,
+    "p95_ms": 2563.8,
+    "p99_ms": 4109.3
+   },
+   "package": {
+    "n": 212,
+    "codes": {
+     "200": 212
+    },
+    "p50_ms": 553.7,
+    "p95_ms": 1299.5,
+    "p99_ms": 2466.3
+   },
+   "ask": {
+    "n": 650,
+    "codes": {
+     "200": 584,
+     "422": 66
+    },
+    "p50_ms": 715.0,
+    "p95_ms": 1505.0,
+    "p99_ms": 3445.0
+   },
+   "investigate": {
+    "n": 889,
+    "codes": {
+     "200": 889
+    },
+    "p50_ms": 551.7,
+    "p95_ms": 1259.7,
+    "p99_ms": 3535.0
+   },
+   "attack_bad_json": {
+    "n": 57,
+    "codes": {
+     "422": 57
+    },
+    "p50_ms": 424.9,
+    "p95_ms": 1269.1,
+    "p99_ms": 2002.2
+   },
+   "attack_big_body": {
+    "n": 64,
+    "codes": {
+     "413": 64
+    },
+    "p50_ms": 148.2,
+    "p95_ms": 337.9,
+    "p99_ms": 2106.9
+   },
+   "webhook": {
+    "n": 73,
+    "codes": {
+     "200": 73
+    },
+    "p50_ms": 456.6,
+    "p95_ms": 1701.8,
+    "p99_ms": 3532.5
+   },
+   "attack_unknown_case": {
+    "n": 54,
+    "codes": {
+     "404": 54
+    },
+    "p50_ms": 436.0,
+    "p95_ms": 1343.0,
+    "p99_ms": 3789.2
+   },
+   "sweep": {
+    "n": 86,
+    "codes": {
+     "200": 86
+    },
+    "p50_ms": 1453.6,
+    "p95_ms": 2904.0,
+    "p99_ms": 3888.7
+   },
+   "attack_traversal": {
+    "n": 103,
+    "codes": {
+     "404": 103
+    },
+    "p50_ms": 464.7,
+    "p95_ms": 1127.7,
+    "p99_ms": 2027.0
+   }
+  },
+  "server_stderr_tail": "C:\\Users\\Sujit Narrayan M\\AppData\\Roaming\\Python\\Python314\\site-packages\\requests\\__init__.py:113: RequestsDependencyWarning: urllib3 (2.6.3) or chardet (7.4.3)/charset_normalizer (3.4.4) doesn't match a supported version!\r\n  warnings.warn(\r\n"
+ }
+}

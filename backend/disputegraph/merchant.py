@@ -17,7 +17,7 @@ import re
 from collections import Counter
 from pathlib import Path
 
-from .llm import classify_claim
+from .llm import classify_claim, map_label
 from .model import Fact, Source
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -58,12 +58,32 @@ def load_pages(invoice_id: str) -> list[dict]:
     return pages
 
 
+MONTHS = {m: i for i, m in enumerate(
+    ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"], 1)}
+
+
+def to_iso(value: str) -> str:
+    """2026-10-14 | 10/14/2026 | Oct 14, 2026 | 14 Oct 2026 -> 2026-10-14 (else unchanged)."""
+    v = value.strip()
+    if m := re.match(r"(\d{4})-(\d{2})-(\d{2})", v):
+        return m.group(0)
+    if m := re.match(r"(\d{1,2})/(\d{1,2})/(\d{4})", v):  # US month/day/year
+        return f"{m.group(3)}-{int(m.group(1)):02d}-{int(m.group(2)):02d}"
+    if m := re.match(r"([A-Za-z]{3})[a-z]*\.? (\d{1,2}),? (\d{4})", v):
+        if mo := MONTHS.get(m.group(1).lower()):
+            return f"{m.group(3)}-{mo:02d}-{int(m.group(2)):02d}"
+    if m := re.match(r"(\d{1,2}) ([A-Za-z]{3})[a-z]*\.? (\d{4})", v):
+        if mo := MONTHS.get(m.group(2).lower()):
+            return f"{m.group(3)}-{mo:02d}-{int(m.group(1)):02d}"
+    return v
+
+
 def _norm(field: str, value: str):
     if field == "amount":
         m = AMOUNT.search(value)
         return m.group(1).replace(",", "") if m else value
     if field == "shipped_at":
-        return value[:10]
+        return to_iso(value)
     return value
 
 
@@ -83,11 +103,13 @@ def extract(invoice_id: str, pages: list[dict] | None = None) -> list[Fact]:
                 continue
             if m := LINE.match(line):
                 label = m.group(1).strip().lower()
-                for pat, field in LABELS.items():
-                    if re.fullmatch(pat, label):
-                        facts.append(Fact(entity=ent, field=field, value=_norm(field, m.group(2)),
-                                          observed_at=at, source=src))
-                        break
+                field = next((f for pat, f in LABELS.items() if re.fullmatch(pat, label)), None)
+                method = "regex"
+                if field is None and (field := map_label(label)):  # unseen wording -> LLM maps it
+                    method = "llm"
+                if field:
+                    facts.append(Fact(entity=ent, field=field, value=_norm(field, m.group(2)),
+                                      observed_at=at, source=src, method=method))
                 continue
             hit = False
             for pat, field, val in CLAIMS:

@@ -7,6 +7,8 @@ evidence is reported as a gap, never as proof the other side is wrong.
 """
 from __future__ import annotations
 
+import difflib
+import re
 from typing import Literal
 
 from pydantic import BaseModel
@@ -53,22 +55,38 @@ def check_ids(pp, mc) -> list[Finding]:
     return out
 
 
+def _money(v) -> float | None:
+    try:
+        x = float(str(v).replace(",", "").strip())
+    except ValueError:
+        return None
+    return x if x == x and abs(x) < 1e12 else None  # no NaN / inf / absurd values
+
+
 def check_amount(pp, mc) -> list[Finding]:
     p = _pick(pp, "amount", entity_prefix="capture:")
     m = _pick(mc, "amount")
     if not p or not m:
         return [Finding(check="amount", verdict="MISSING", paypal=p, merchant=m,
                         note="amount missing on one side")]
-    pv = float(p[0].value)
+    pv = _money(p[0].value)
+    if pv is None:
+        return [Finding(check="amount", verdict="MISSING", paypal=p[:1], merchant=m,
+                        note=f"PayPal amount '{p[0].value}' is unreadable")]
     out = []
     for f in m:
-        ok = abs(float(f.value) - pv) < 0.005
+        mv = _money(f.value)
+        if mv is None:  # damaged / hostile number: report, never crash or guess
+            out.append(Finding(check="amount", verdict="MISSING", paypal=p[:1], merchant=[f],
+                               note=f"merchant {f.entity.split(':')[1]} amount '{str(f.value)[:30]}' is unreadable"))
+            continue
+        ok = abs(mv - pv) < 0.005
         out.append(Finding(
             check="amount", verdict="MATCH" if ok else "VALUE_MISMATCH",
             paypal=p[:1], merchant=[f],
             note=(f"{f.value} matches PayPal capture" if ok else
                   f"merchant {f.entity.split(':')[1]} says {f.value}, PayPal captured {p[0].value}"
-                  f" (diff {float(f.value) - pv:+.2f})")))
+                  f" (diff {mv - pv:+.2f})")))
     return out
 
 
@@ -125,7 +143,14 @@ def check_ship_to(pp, mc) -> list[Finding]:
     out = []
     for f in m:
         v = str(f.value).lower()
-        ok = zip_ in v and city in v
+        # ZIP is the strong signal; the city may carry OCR damage ("Denvcr")
+        words = re.findall(r"[a-z]+", v)
+        n = max(len(city.split()), 1)
+        city_ok = bool(city) and (city in v or any(
+            difflib.SequenceMatcher(None, city, " ".join(words[i:i + n])).ratio() > .8
+            for i in range(len(words))))
+        has_zip = bool(re.search(r"\b\d{5}\b", v))
+        ok = (zip_ in v) if (zip_ and has_zip) else city_ok
         out.append(Finding(check="ship_to", verdict="MATCH" if ok else "VALUE_MISMATCH",
                            paypal=p[:1], merchant=[f],
                            note=(f"{f.entity.split(':')[1]} ships to {city.title()} {zip_}" if ok
@@ -149,7 +174,55 @@ def check_refunds(pp, mc) -> list[Finding]:
                              "; merchant has no record of it (likely dispute hold, verify)")))]
 
 
-CHECKS = [check_ids, check_amount, check_ship_to, check_timeline, check_delivery, check_refunds]
+def _tnorm(v) -> str:
+    return re.sub(r"[^A-Za-z0-9]", "", str(v)).upper()
+
+
+def check_tracking(pp, mc) -> list[Finding]:
+    """The carrier record must be for the parcel the merchant says it sent."""
+    claimed = [f for f in mc if f.field == "tracking" and f.entity not in RECORD_DOCS]
+    records = [f for f in mc if f.field == "tracking" and f.entity in RECORD_DOCS]
+    if not claimed or not records:
+        return []
+    ids = {_tnorm(f.value) for f in claimed}
+    bad = [r for r in records if _tnorm(r.value) not in ids]
+    return [Finding(check="tracking", verdict="VALUE_MISMATCH" if bad else "MATCH",
+                    merchant=(bad + claimed[:1]) if bad else records[:1] + claimed[:1],
+                    note=(f"carrier record is for tracking {bad[0].value}, but the merchant shipped "
+                          f"{claimed[0].value} (proof may be for a different parcel)" if bad
+                          else "carrier record is for the same tracking number"))]
+
+
+def check_delivery_time(pp, mc) -> list[Finding]:
+    """A delivery scan cannot come before the item shipped or was paid for."""
+    cap = _pick(pp, "captured_at")
+    shipped = [str(s.value) for s in _pick(mc, "shipped_at") if re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(s.value))]
+    scans = [f for f in mc if f.entity in RECORD_DOCS and f.field == "scan"
+             and str(f.value).lower().startswith("delivered") and f.observed_at]
+    floor = min([*shipped, *(c.value[:10] for c in cap)], default=None)
+    if not scans or not floor:
+        return []
+    bad = [f for f in scans if f.observed_at[:10] < floor]
+    return [Finding(check="delivery_time", verdict="TIME_MISMATCH" if bad else "MATCH",
+                    paypal=cap[:1], merchant=bad or scans[:1],
+                    note=(f"carrier shows delivery on {bad[0].observed_at[:10]}, before the item "
+                          f"shipped / was paid ({floor}); the scan may be fabricated" if bad
+                          else "delivery scan is after shipping and payment"))]
+
+
+def tracking_reuse(cases: dict[str, list[Fact]]) -> dict[str, list[str]]:
+    """Cross-case: one tracking number offered as proof for different orders.
+    cases: {case_id: merchant facts} -> {tracking: [case_ids]} for reused ones."""
+    seen: dict[str, set[str]] = {}
+    for cid, facts in cases.items():
+        for f in facts:
+            if f.field == "tracking":
+                seen.setdefault(_tnorm(f.value), set()).add(cid)
+    return {t: sorted(ids) for t, ids in seen.items() if len(ids) > 1}
+
+
+CHECKS = [check_ids, check_amount, check_ship_to, check_timeline, check_delivery, check_refunds,
+          check_tracking, check_delivery_time]
 
 
 def reconcile(paypal_facts: list[Fact], merchant_facts: list[Fact]) -> list[Finding]:

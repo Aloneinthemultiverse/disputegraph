@@ -99,3 +99,29 @@ def classify_claim(line: str) -> str | None:
         return None
     word = text.strip().split()[0].upper().strip(".")
     return word if word in ("DELIVERED", "SHIPPED", "REFUNDED") else None
+
+
+FIELDS = {"invoice_id": "the merchant's invoice number", "custom_id": "the order / PO reference",
+          "amount": "the order or invoice total charged", "tracking": "the parcel tracking / waybill number",
+          "carrier": "the shipping company", "shipped_at": "the date the item was sent",
+          "ship_to": "the delivery address", "delivery_status": "the order or shipment status"}
+LABEL_SYS = ("Map a field label from a seller's document (it may have typos or OCR errors) to one "
+             "canonical field. Reply with exactly one word from: " + ", ".join(FIELDS) + ", NONE.\n" +
+             "\n".join(f"{k}: {v}" for k, v in FIELDS.items()) +
+             "\nReply NONE for anything else (the document's own date, item names, notes, payment method).")
+_LABEL_MEMO: dict[str, str | None] = {}
+
+
+def map_label(label: str) -> str | None:
+    """Unseen 'Label: value' wording (e.g. 'AWB no.', 'Amount payable') -> canonical field.
+    The LLM only names the field; the value is still read and compared by code."""
+    label = label.strip().lower()
+    if label in _LABEL_MEMO:
+        return _LABEL_MEMO[label]
+    if len(label) > 40 or not re.search(r"[a-z]", label):
+        return None
+    text, _ = _chat(LABEL_SYS, label)
+    text = (text or "").strip()
+    word = text.split()[0].strip(".").lower() if text else ""
+    _LABEL_MEMO[label] = word if word in FIELDS else None
+    return _LABEL_MEMO[label]

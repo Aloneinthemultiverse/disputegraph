@@ -1,0 +1,641 @@
+{
+ "n": 60,
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "single_llm": {
+  "cases": 60,
+  "exact_accuracy": 0.75,
+  "exact_accuracy_95ci": [
+   0.633,
+   0.85
+  ],
+  "micro": {
+   "precision": 1.0,
+   "recall": 0.709,
+   "f1": 0.83
+  },
+  "false_alarm_rate_on_clean": 0.0,
+  "errors": 0,
+  "latency_ms": {
+   "p50": 0.87,
+   "p95": 33.76,
+   "max": 45.42
+  },
+  "per_label": {
+   "amount_mismatch": {
+    "precision": 1.0,
+    "recall": 0.273,
+    "f1": 0.429,
+    "support": 11,
+    "fp": 0
+   },
+   "delivery_contradiction": {
+    "precision": 1.0,
+    "recall": 0.833,
+    "f1": 0.909,
+    "support": 6,
+    "fp": 0
+   },
+   "delivery_unsupported": {
+    "precision": null,
+    "recall": 0.0,
+    "f1": 0.0,
+    "support": 3,
+    "fp": 0
+   },
+   "early_ship": {
+    "precision": 1.0,
+    "recall": 0.8,
+    "f1": 0.889,
+    "support": 5,
+    "fp": 0
+   },
+   "false_refund_claim": {
+    "precision": 1.0,
+    "recall": 0.667,
+    "f1": 0.8,
+    "support": 3,
+    "fp": 0
+   },
+   "ship_to_mismatch": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 8,
+    "fp": 0
+   },
+   "id_mismatch": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 11,
+    "fp": 0
+   },
+   "tracking_mismatch": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 3,
+    "fp": 0
+   },
+   "impossible_timeline": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 3,
+    "fp": 0
+   },
+   "tracking_reuse": {
+    "precision": null,
+    "recall": 0.0,
+    "f1": 0.0,
+    "support": 2,
+    "fp": 0
+   }
+  },
+  "by_split": {
+   "dev": {
+    "n": 30,
+    "exact": 0.767,
+    "micro_f1": 0.84
+   },
+   "heldout": {
+    "n": 30,
+    "exact": 0.733,
+    "micro_f1": 0.818
+   }
+  },
+  "by_family": {
+   "clean": {
+    "n": 12,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   },
+   "multi": {
+    "n": 12,
+    "exact": 0.25,
+    "micro_f1": 0.75
+   },
+   "scam": {
+    "n": 12,
+    "exact": 0.583,
+    "micro_f1": 0.839
+   },
+   "single": {
+    "n": 12,
+    "exact": 0.917,
+    "micro_f1": 0.957
+   },
+   "trap": {
+    "n": 12,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   }
+  },
+  "by_trap": {
+   "buyer_question": {
+    "n": 5,
+    "exact": 0.8,
+    "micro_f1": 0.0
+   },
+   "injection": {
+    "n": 3,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   },
+   "negation": {
+    "n": 3,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   },
+   "other_order": {
+    "n": 1,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   },
+   "real_refund": {
+    "n": 1,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   }
+  },
+  "latency_ms_live_first_run": {
+   "p50": 34917.1,
+   "note": "measured on the first (uncached) run; reruns read data/llm_cache"
+  }
+ },
+ "disputegraph_ai": {
+  "cases": 60,
+  "exact_accuracy": 0.817,
+  "exact_accuracy_95ci": [
+   0.717,
+   0.917
+  ],
+  "micro": {
+   "precision": 1.0,
+   "recall": 0.745,
+   "f1": 0.854
+  },
+  "false_alarm_rate_on_clean": 0.0,
+  "errors": 0,
+  "latency_ms": {
+   "p50": 0.57,
+   "p95": 2.64,
+   "max": 6.32
+  },
+  "per_label": {
+   "amount_mismatch": {
+    "precision": 1.0,
+    "recall": 0.909,
+    "f1": 0.952,
+    "support": 11,
+    "fp": 0
+   },
+   "delivery_contradiction": {
+    "precision": 1.0,
+    "recall": 0.667,
+    "f1": 0.8,
+    "support": 6,
+    "fp": 0
+   },
+   "delivery_unsupported": {
+    "precision": 1.0,
+    "recall": 0.667,
+    "f1": 0.8,
+    "support": 3,
+    "fp": 0
+   },
+   "early_ship": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 5,
+    "fp": 0
+   },
+   "false_refund_claim": {
+    "precision": 1.0,
+    "recall": 0.667,
+    "f1": 0.8,
+    "support": 3,
+    "fp": 0
+   },
+   "ship_to_mismatch": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 8,
+    "fp": 0
+   },
+   "id_mismatch": {
+    "precision": 1.0,
+    "recall": 0.636,
+    "f1": 0.778,
+    "support": 11,
+    "fp": 0
+   },
+   "tracking_mismatch": {
+    "precision": 1.0,
+    "recall": 0.333,
+    "f1": 0.5,
+    "support": 3,
+    "fp": 0
+   },
+   "impossible_timeline": {
+    "precision": 1.0,
+    "recall": 0.667,
+    "f1": 0.8,
+    "support": 3,
+    "fp": 0
+   },
+   "tracking_reuse": {
+    "precision": null,
+    "recall": 0.0,
+    "f1": 0.0,
+    "support": 2,
+    "fp": 0
+   }
+  },
+  "by_split": {
+   "dev": {
+    "n": 30,
+    "exact": 0.933,
+    "micro_f1": 0.964
+   },
+   "heldout": {
+    "n": 30,
+    "exact": 0.7,
+    "micro_f1": 0.7
+   }
+  },
+  "by_family": {
+   "clean": {
+    "n": 12,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   },
+   "multi": {
+    "n": 12,
+    "exact": 0.583,
+    "micro_f1": 0.837
+   },
+   "scam": {
+    "n": 12,
+    "exact": 0.583,
+    "micro_f1": 0.8
+   },
+   "single": {
+    "n": 12,
+    "exact": 0.917,
+    "micro_f1": 0.957
+   },
+   "trap": {
+    "n": 12,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   }
+  },
+  "by_trap": {
+   "buyer_question": {
+    "n": 5,
+    "exact": 0.8,
+    "micro_f1": 0.0
+   },
+   "injection": {
+    "n": 3,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   },
+   "negation": {
+    "n": 3,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   },
+   "other_order": {
+    "n": 1,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   },
+   "real_refund": {
+    "n": 1,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   }
+  }
+ },
+ "disputegraph_regex": {
+  "cases": 60,
+  "exact_accuracy": 0.667,
+  "exact_accuracy_95ci": [
+   0.55,
+   0.767
+  ],
+  "micro": {
+   "precision": 1.0,
+   "recall": 0.491,
+   "f1": 0.659
+  },
+  "false_alarm_rate_on_clean": 0.0,
+  "errors": 0,
+  "latency_ms": {
+   "p50": 0.26,
+   "p95": 0.67,
+   "max": 0.77
+  },
+  "per_label": {
+   "amount_mismatch": {
+    "precision": 1.0,
+    "recall": 0.636,
+    "f1": 0.778,
+    "support": 11,
+    "fp": 0
+   },
+   "delivery_contradiction": {
+    "precision": 1.0,
+    "recall": 0.667,
+    "f1": 0.8,
+    "support": 6,
+    "fp": 0
+   },
+   "delivery_unsupported": {
+    "precision": 1.0,
+    "recall": 0.667,
+    "f1": 0.8,
+    "support": 3,
+    "fp": 0
+   },
+   "early_ship": {
+    "precision": 1.0,
+    "recall": 0.4,
+    "f1": 0.571,
+    "support": 5,
+    "fp": 0
+   },
+   "false_refund_claim": {
+    "precision": 1.0,
+    "recall": 0.667,
+    "f1": 0.8,
+    "support": 3,
+    "fp": 0
+   },
+   "ship_to_mismatch": {
+    "precision": 1.0,
+    "recall": 0.375,
+    "f1": 0.545,
+    "support": 8,
+    "fp": 0
+   },
+   "id_mismatch": {
+    "precision": 1.0,
+    "recall": 0.364,
+    "f1": 0.533,
+    "support": 11,
+    "fp": 0
+   },
+   "tracking_mismatch": {
+    "precision": 1.0,
+    "recall": 0.333,
+    "f1": 0.5,
+    "support": 3,
+    "fp": 0
+   },
+   "impossible_timeline": {
+    "precision": 1.0,
+    "recall": 0.667,
+    "f1": 0.8,
+    "support": 3,
+    "fp": 0
+   },
+   "tracking_reuse": {
+    "precision": null,
+    "recall": 0.0,
+    "f1": 0.0,
+    "support": 2,
+    "fp": 0
+   }
+  },
+  "by_split": {
+   "dev": {
+    "n": 30,
+    "exact": 0.933,
+    "micro_f1": 0.964
+   },
+   "heldout": {
+    "n": 30,
+    "exact": 0.4,
+    "micro_f1": 0.0
+   }
+  },
+  "by_family": {
+   "clean": {
+    "n": 12,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   },
+   "multi": {
+    "n": 12,
+    "exact": 0.5,
+    "micro_f1": 0.684
+   },
+   "scam": {
+    "n": 12,
+    "exact": 0.417,
+    "micro_f1": 0.667
+   },
+   "single": {
+    "n": 12,
+    "exact": 0.417,
+    "micro_f1": 0.588
+   },
+   "trap": {
+    "n": 12,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   }
+  },
+  "by_trap": {
+   "buyer_question": {
+    "n": 5,
+    "exact": 0.8,
+    "micro_f1": 0.0
+   },
+   "injection": {
+    "n": 3,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   },
+   "negation": {
+    "n": 3,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   },
+   "other_order": {
+    "n": 1,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   },
+   "real_refund": {
+    "n": 1,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   }
+  }
+ },
+ "keyword": {
+  "cases": 60,
+  "exact_accuracy": 0.533,
+  "exact_accuracy_95ci": [
+   0.4,
+   0.65
+  ],
+  "micro": {
+   "precision": 0.882,
+   "recall": 0.545,
+   "f1": 0.674
+  },
+  "false_alarm_rate_on_clean": 0.167,
+  "errors": 0,
+  "latency_ms": {
+   "p50": 0.01,
+   "p95": 0.02,
+   "max": 0.03
+  },
+  "per_label": {
+   "amount_mismatch": {
+    "precision": null,
+    "recall": 0.0,
+    "f1": 0.0,
+    "support": 11,
+    "fp": 0
+   },
+   "delivery_contradiction": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 6,
+    "fp": 0
+   },
+   "delivery_unsupported": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 3,
+    "fp": 0
+   },
+   "early_ship": {
+    "precision": null,
+    "recall": 0.0,
+    "f1": 0.0,
+    "support": 5,
+    "fp": 0
+   },
+   "false_refund_claim": {
+    "precision": 0.333,
+    "recall": 0.667,
+    "f1": 0.444,
+    "support": 3,
+    "fp": 4
+   },
+   "ship_to_mismatch": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 8,
+    "fp": 0
+   },
+   "id_mismatch": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 11,
+    "fp": 0
+   },
+   "tracking_mismatch": {
+    "precision": null,
+    "recall": 0.0,
+    "f1": 0.0,
+    "support": 3,
+    "fp": 0
+   },
+   "impossible_timeline": {
+    "precision": null,
+    "recall": 0.0,
+    "f1": 0.0,
+    "support": 3,
+    "fp": 0
+   },
+   "tracking_reuse": {
+    "precision": null,
+    "recall": 0.0,
+    "f1": 0.0,
+    "support": 2,
+    "fp": 0
+   }
+  },
+  "by_split": {
+   "dev": {
+    "n": 30,
+    "exact": 0.433,
+    "micro_f1": 0.625
+   },
+   "heldout": {
+    "n": 30,
+    "exact": 0.633,
+    "micro_f1": 0.732
+   }
+  },
+  "by_family": {
+   "clean": {
+    "n": 12,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   },
+   "multi": {
+    "n": 12,
+    "exact": 0.417,
+    "micro_f1": 0.837
+   },
+   "scam": {
+    "n": 12,
+    "exact": 0.167,
+    "micro_f1": 0.56
+   },
+   "single": {
+    "n": 12,
+    "exact": 0.417,
+    "micro_f1": 0.588
+   },
+   "trap": {
+    "n": 12,
+    "exact": 0.667,
+    "micro_f1": 0.0
+   }
+  },
+  "by_trap": {
+   "buyer_question": {
+    "n": 5,
+    "exact": 0.8,
+    "micro_f1": 0.0
+   },
+   "injection": {
+    "n": 3,
+    "exact": 0.0,
+    "micro_f1": 0.0
+   },
+   "negation": {
+    "n": 3,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   },
+   "other_order": {
+    "n": 1,
+    "exact": 0.0,
+    "micro_f1": 0.0
+   },
+   "real_refund": {
+    "n": 1,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   }
+  }
+ },
+ "llm_errors": {}
+}

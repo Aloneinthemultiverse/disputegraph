@@ -6,6 +6,7 @@ Demo (no credentials): DEMO_MODE=1 uvicorn backend.app:app --port 8000
 from __future__ import annotations
 
 import json
+import re
 import os
 
 import requests
@@ -14,29 +15,49 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from fastapi.responses import JSONResponse
 
 from .disputegraph import investigator as inv
 from .disputegraph import package
 from .disputegraph.gate import ask
-from .disputegraph.merchant import MERCHANT
+from .disputegraph.merchant import MERCHANT, extract
 from .disputegraph.paypal import CACHE, PayPal
-from .disputegraph.reconcile import Finding
+from .disputegraph.reconcile import Finding, tracking_reuse
 from .disputegraph.turbograph import graph_for
 
 ROOT = Path(__file__).resolve().parents[1]
 STATIC = ROOT / "frontend"
 app = FastAPI(title="DisputeGraph")
 app.mount("/static", StaticFiles(directory=STATIC), name="static")
+MAX_BODY = 256 * 1024  # evidence text included; anything bigger is refused before parsing
+
+
+@app.middleware("http")
+async def limit_body(request: Request, call_next):
+    size = request.headers.get("content-length")
+    if size and size.isdigit() and int(size) > MAX_BODY:
+        return JSONResponse({"detail": "request too large"}, status_code=413)
+    return await call_next(request)
+
+
+@app.on_event("startup")
+def warm():
+    """Build each case's evidence graph once at boot, not on the first question."""
+    for d in disputes():
+        try:
+            graph_for(inv.investigate(d["dispute_id"])["invoice_id"])
+        except Exception:
+            pass
 
 
 class Question(BaseModel):
-    question: str
+    question: str = Field(max_length=1000)
 
 
 class Evidence(BaseModel):
-    name: str
-    text: str
+    name: str = Field(max_length=120)
+    text: str = Field(max_length=200_000)
 
 
 @app.get("/")
@@ -98,7 +119,7 @@ def reset(dispute_id: str):
 
 
 class Approval(BaseModel):
-    approved_by: str
+    approved_by: str = Field(max_length=120)
     confirm: bool
 
 
@@ -129,6 +150,13 @@ def refund_sweep():
             if f["check"] == "refund" and f["verdict"] != "MATCH":
                 out.append({"dispute_id": d["dispute_id"], "invoice_id": r["invoice_id"],
                             "verdict": f["verdict"], "note": f["note"]})
+    # cross-case: one parcel offered as delivery proof for different orders
+    facts = {d["dispute_id"]: extract(inv.investigate(d["dispute_id"])["invoice_id"]) for d in disputes()}
+    for trk, ids in tracking_reuse(facts).items():
+        for i in ids:
+            out.append({"dispute_id": i, "invoice_id": inv.investigate(i)["invoice_id"],
+                        "verdict": "TRACKING_REUSED",
+                        "note": f"tracking {trk} is also offered as proof in {', '.join(x for x in ids if x != i)}"})
     return out
 
 
@@ -165,10 +193,15 @@ async def paypal_webhook(req: Request):
 def source(ref: str, pointer: str = ""):
     """Click-through: show the exact API field or document page behind a fact."""
     if ref.startswith("/"):  # PayPal API path -> cached JSON, resolve pointer
-        body = json.loads(PayPal._key(ref).read_text(encoding="utf-8"))
-        node = body
-        for part in [p for p in pointer.split("/") if p]:
-            node = node[int(part)] if isinstance(node, list) else node.get(part)
+        key = PayPal._key(ref)
+        if not re.fullmatch(r"/v[12]/[A-Za-z0-9/_-]+", ref) or not key.exists():
+            raise HTTPException(404, "unknown record")
+        node = json.loads(key.read_text(encoding="utf-8"))
+        try:
+            for part in [p for p in pointer.split("/") if p]:
+                node = node[int(part)] if isinstance(node, list) else node.get(part)
+        except (ValueError, IndexError, AttributeError, TypeError):
+            raise HTTPException(404, "unknown field")
         return {"side": "paypal", "ref": ref, "pointer": pointer, "value": node}
     path = (MERCHANT / ref).resolve()
     if MERCHANT.resolve() not in path.parents or not path.exists():

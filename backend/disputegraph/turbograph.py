@@ -25,6 +25,8 @@ bag-of-words embedding is used and the result is labelled as such.
 """
 from __future__ import annotations
 
+import threading
+
 import hashlib
 import math
 import os
@@ -213,12 +215,20 @@ class TurboGraph:
 
 
 _GRAPHS: dict[str, tuple[float, TurboGraph]] = {}
+_LOCKS: dict[str, threading.Lock] = {}
+_LOCKS_GUARD = threading.Lock()
 
 
 def graph_for(invoice_id: str) -> TurboGraph:
     folder = ROOT / "data" / "merchant" / invoice_id
     stamp = max((f.stat().st_mtime for f in folder.glob("*.md")), default=0.0) + len(list(folder.glob("*.md")))
     hit = _GRAPHS.get(invoice_id)
-    if not hit or hit[0] != stamp:  # rebuild when evidence is added or removed
-        _GRAPHS[invoice_id] = (stamp, TurboGraph(invoice_id))
-    return _GRAPHS[invoice_id][1]
+    if hit and hit[0] == stamp:
+        return hit[1]
+    with _LOCKS_GUARD:
+        lock = _LOCKS.setdefault(invoice_id, threading.Lock())
+    with lock:  # one build per case at a time; other requests wait and reuse it
+        hit = _GRAPHS.get(invoice_id)
+        if not hit or hit[0] != stamp:  # rebuild when evidence is added or removed
+            _GRAPHS[invoice_id] = (stamp, TurboGraph(invoice_id))
+        return _GRAPHS[invoice_id][1]

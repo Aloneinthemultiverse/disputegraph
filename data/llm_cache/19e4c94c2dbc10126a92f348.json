@@ -1,0 +1,4 @@
+{
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "text": "[]\n[]\n\n{\n  \"amount_mismatch\": false,\n  \"delivery_contradiction\": false,\n  \"delivery_unsupported\": false,\n  \"early_ship\": false,\n  \"false_refund_claim\": false,\n  \"ship_to_mismatch\": false,\n  \"id_mismatch\": false,\n  \"tracking_mismatch\": false,\n  \"impossible_timeline\": false\n}"
+}
