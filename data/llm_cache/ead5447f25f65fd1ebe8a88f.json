@@ -1,0 +1,4 @@
+{
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "text": "INV-DEMO0003 matches across two merchant documents [F0]  \nORDER-C0003 matches across two merchant documents [F1]  \n89.00 matches the PayPal capture [F2]  \ncourier_tracking ships to Portland 97205 [F4]  \nThe timeline shows the item was shipped before PayPal captured payment [F6]"
+}

@@ -1,0 +1,4 @@
+{
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "text": "INV-E2462F39 matches across two merchant documents [F0]\nORDER-A123 matches across two merchant documents [F1]\nThe merchant order sheet states 760.00 while PayPal captured 750.00, a +10.00 difference [F3]\nThe courier tracking ships to San Jose 95131 [F4]\nPayPal shows a refund/reversal of 723.33, but the merchant has no record of it [F9]"
+}

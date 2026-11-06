@@ -1,0 +1,4 @@
+{
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "text": "The invoice identifier INV-DEMO0005 matches across two merchant documents. [F0]  \nThe order custom ID ORDER-E0005 matches across two merchant documents. [F1]  \nThe transaction amount of 45.50 matches the PayPal capture. [F2]  \nThe capture time or ship date is missing from the evidence. [F5]  \nThe merchant says the buyer was refunded, but PayPal shows no refund on this order. [F7]"
+}

@@ -1,0 +1,4 @@
+{
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "text": "The invoice ID INV-E2462F39 matches across two merchant documents. [F0]  \nThe PayPal capture amount is 750.00, but the merchant order sheet records 760.00, creating a 10.00 difference. [F3]  \nThe merchant states the package was delivered, while the carrier record shows 'In Transit', contradicting the delivery status. [F7]  \nPayPal shows a refund/reversal of 723.33, but the merchant has no record of it. [F8]"
+}

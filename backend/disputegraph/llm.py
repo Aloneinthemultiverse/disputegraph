@@ -34,16 +34,17 @@ def _chat(system: str, user: str) -> tuple[str | None, str]:
     if path.exists():
         return json.loads(path.read_text(encoding="utf-8"))["text"], "cache"
     base, api_key = os.environ.get("LLM_BASE_URL"), os.environ.get("LLM_API_KEY")
-    if not (base and api_key and model) or os.environ.get("DEMO_MODE") == "1":
+    if not (base and api_key and model):
         return None, "none"
     try:
-        r = requests.post(f"{base.rstrip('/')}/chat/completions", timeout=60,
+        r = requests.post(f"{base.rstrip('/')}/chat/completions", timeout=180,
                           headers={"Authorization": f"Bearer {api_key}"},
                           json={"model": model, "temperature": 0,
                                 "messages": [{"role": "system", "content": system},
                                              {"role": "user", "content": user}]})
         r.raise_for_status()
-        text = r.json()["choices"][0]["message"]["content"].strip()
+        text = r.json()["choices"][0]["message"]["content"] or ""
+        text = re.sub(r"<think>.*?</think>", "", text, flags=re.S).strip()  # reasoning models
     except Exception:
         return None, "none"
     path.write_text(json.dumps({"model": model, "text": text}, indent=1), encoding="utf-8")
@@ -62,13 +63,16 @@ def summarize(findings: list[dict]) -> dict:
     text, src = _chat(SUMMARY_SYS, "\n".join(lines))
     if text is None:
         return {"source": "template", "sentences": _template(findings)}
-    kept, dropped = [], 0
-    for sent in re.split(r"(?<=[.!?\]])\s+", text):
-        tags = [int(t) for t in re.findall(r"\[F(\d+)\]", sent)]
-        if tags and all(0 <= t < len(findings) for t in tags):
-            kept.append({"text": re.sub(r"\s*\[F\d+\]", "", sent).strip(), "findings": tags})
-        elif sent.strip():
-            dropped += 1  # untagged or bad tag -> not shown
+    # Each claim must be followed by its tag(s): "text [F2]" or "text. [F2][F5]".
+    kept, end = [], 0
+    for m in re.finditer(r"([^\[\]]+?)\s*((?:\[F\d+\]\s*)+)", text):
+        sent = m.group(1).strip(" .\n\t-*")
+        tags = [int(t) for t in re.findall(r"\d+", m.group(2))]
+        end = m.end()
+        if sent and all(0 <= t < len(findings) for t in tags):
+            kept.append({"text": sent + ".", "findings": tags})
+    tail = text[end:].strip()
+    dropped = len([x for x in re.split(r"(?<=[.!?])\s+", tail) if x.strip()])  # untagged -> not shown
     return {"source": f"llm:{src}", "sentences": kept or _template(findings), "dropped": dropped}
 
 

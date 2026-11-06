@@ -46,7 +46,8 @@ class PayPal:
         """GET an API path like /v2/payments/captures/ID (also accepts full URLs)."""
         path = re.sub(r"^https://api(-m)?\.sandbox\.paypal\.com", "", path)
         key = self._key(path)
-        if self.demo:
+        if self.demo or (key.exists() and '"_synthetic": true' in key.read_text(encoding="utf-8")):
+            # demo mode, or a SYNTHETIC seeded case that has no real PayPal record
             return json.loads(key.read_text(encoding="utf-8"))
         r = requests.get(f"{self.base}{path}", timeout=30,
                          headers={"Authorization": f"Bearer {self._auth()}"})

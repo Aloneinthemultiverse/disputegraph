@@ -1,0 +1,4 @@
+{
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "text": "The invoice identifier INV-DEMO0002 matches across two merchant documents. [F0]  \nThe order custom ID ORDER-B0002 matches across two merchant documents. [F1]  \nThe transaction amount of 129.99 matches the PayPal capture. [F2]  \nDelivery cannot be verified because no carrier record was found for tracking 9400111899223344556677. [F6]"
+}

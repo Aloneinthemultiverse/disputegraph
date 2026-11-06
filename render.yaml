@@ -9,3 +9,5 @@ services:
     envVars:
       - key: DEMO_MODE
         value: "1"
+      - key: LLM_MODEL          # must match the model the cached LLM answers were made with
+        value: nvidia/nemotron-3.5-lightning-30b-a3b

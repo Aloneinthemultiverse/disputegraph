@@ -7,9 +7,16 @@
   "false_alarms": 0,
   "missed": 0,
   "exact_cases": "20/20",
-  "avg_ms": 0.2
+  "avg_ms": 0.3
  },
- "baseline": "skipped (no LLM key configured)",
+ "baseline": {
+  "precision": 1.0,
+  "recall": 0.625,
+  "false_alarms": 0,
+  "missed": 9,
+  "exact_cases": "14/20",
+  "avg_ms": 51489.2
+ },
  "rows": [
   {
    "id": 1,
@@ -21,9 +28,12 @@
     "delivery_contradiction",
     "false_refund_claim"
    ],
-   "disputegraph_ms": 1.147999952081591,
-   "baseline": null,
-   "baseline_ms": 0.1702000154182315
+   "disputegraph_ms": 0.5881999968551099,
+   "baseline": [
+    "delivery_contradiction",
+    "false_refund_claim"
+   ],
+   "baseline_ms": 24909.435399982613
   },
   {
    "id": 2,
@@ -39,9 +49,9 @@
     "early_ship",
     "false_refund_claim"
    ],
-   "disputegraph_ms": 0.21620001643896103,
-   "baseline": null,
-   "baseline_ms": 0.000300002284348011
+   "disputegraph_ms": 0.25699997786432505,
+   "baseline": [],
+   "baseline_ms": 72553.40710002929
   },
   {
    "id": 3,
@@ -53,9 +63,11 @@
     "delivery_unsupported",
     "false_refund_claim"
    ],
-   "disputegraph_ms": 0.1846999512054026,
-   "baseline": null,
-   "baseline_ms": 0.000200001522898674
+   "disputegraph_ms": 0.22899999748915434,
+   "baseline": [
+    "false_refund_claim"
+   ],
+   "baseline_ms": 18056.593199959025
   },
   {
    "id": 4,
@@ -65,17 +77,19 @@
    "disputegraph": [
     "false_refund_claim"
    ],
-   "disputegraph_ms": 0.2172000240534544,
-   "baseline": null,
-   "baseline_ms": 0.000200001522898674
+   "disputegraph_ms": 0.3964999923482537,
+   "baseline": [
+    "false_refund_claim"
+   ],
+   "baseline_ms": 32832.25169999059
   },
   {
    "id": 5,
    "planted": [],
    "disputegraph": [],
-   "disputegraph_ms": 0.19530003191903234,
-   "baseline": null,
-   "baseline_ms": 0.000100000761449337
+   "disputegraph_ms": 0.37260004319250584,
+   "baseline": [],
+   "baseline_ms": 52824.87069995841
   },
   {
    "id": 6,
@@ -89,9 +103,13 @@
     "delivery_contradiction",
     "false_refund_claim"
    ],
-   "disputegraph_ms": 0.20009995205327868,
-   "baseline": null,
-   "baseline_ms": 0.000100000761449337
+   "disputegraph_ms": 0.28979999478906393,
+   "baseline": [
+    "amount_mismatch",
+    "delivery_contradiction",
+    "false_refund_claim"
+   ],
+   "baseline_ms": 80757.89690000238
   },
   {
    "id": 7,
@@ -103,33 +121,35 @@
     "delivery_contradiction",
     "false_refund_claim"
    ],
-   "disputegraph_ms": 0.21769996965304017,
-   "baseline": null,
-   "baseline_ms": 0.000200001522898674
+   "disputegraph_ms": 0.27459999546408653,
+   "baseline": [
+    "false_refund_claim"
+   ],
+   "baseline_ms": 49480.50180001883
   },
   {
    "id": 8,
    "planted": [],
    "disputegraph": [],
-   "disputegraph_ms": 0.172999978531152,
-   "baseline": null,
-   "baseline_ms": 0.000100000761449337
+   "disputegraph_ms": 0.2771999570541084,
+   "baseline": [],
+   "baseline_ms": 20948.93970002886
   },
   {
    "id": 9,
    "planted": [],
    "disputegraph": [],
-   "disputegraph_ms": 0.1778999576345086,
-   "baseline": null,
-   "baseline_ms": 0.000100000761449337
+   "disputegraph_ms": 0.2544999588280916,
+   "baseline": [],
+   "baseline_ms": 47689.05000004452
   },
   {
    "id": 10,
    "planted": [],
    "disputegraph": [],
-   "disputegraph_ms": 0.1734999823383987,
-   "baseline": null,
-   "baseline_ms": 0.000100000761449337
+   "disputegraph_ms": 0.2686000079847872,
+   "baseline": [],
+   "baseline_ms": 42747.40100000054
   },
   {
    "id": 11,
@@ -141,17 +161,19 @@
     "amount_mismatch",
     "delivery_unsupported"
    ],
-   "disputegraph_ms": 0.13350002700462937,
-   "baseline": null,
-   "baseline_ms": 0.000100000761449337
+   "disputegraph_ms": 0.2921000123023987,
+   "baseline": [
+    "amount_mismatch"
+   ],
+   "baseline_ms": 38768.6194999842
   },
   {
    "id": 12,
    "planted": [],
    "disputegraph": [],
-   "disputegraph_ms": 0.17380004283040762,
-   "baseline": null,
-   "baseline_ms": 0.000100000761449337
+   "disputegraph_ms": 0.33189996611326933,
+   "baseline": [],
+   "baseline_ms": 64309.29780000588
   },
   {
    "id": 13,
@@ -163,17 +185,20 @@
     "delivery_contradiction",
     "false_refund_claim"
    ],
-   "disputegraph_ms": 0.18989999080076814,
-   "baseline": null,
-   "baseline_ms": 0.000100000761449337
+   "disputegraph_ms": 0.37369999336078763,
+   "baseline": [
+    "delivery_contradiction",
+    "false_refund_claim"
+   ],
+   "baseline_ms": 83883.64469999215
   },
   {
    "id": 14,
    "planted": [],
    "disputegraph": [],
-   "disputegraph_ms": 0.26130001060664654,
-   "baseline": null,
-   "baseline_ms": 0.000200001522898674
+   "disputegraph_ms": 0.2892000484280288,
+   "baseline": [],
+   "baseline_ms": 30968.752900022082
   },
   {
    "id": 15,
@@ -183,9 +208,11 @@
    "disputegraph": [
     "false_refund_claim"
    ],
-   "disputegraph_ms": 0.20870001753792167,
-   "baseline": null,
-   "baseline_ms": 0.000100000761449337
+   "disputegraph_ms": 0.24949997896328568,
+   "baseline": [
+    "false_refund_claim"
+   ],
+   "baseline_ms": 24631.059300038032
   },
   {
    "id": 16,
@@ -195,17 +222,17 @@
    "disputegraph": [
     "amount_mismatch"
    ],
-   "disputegraph_ms": 0.2970999921672046,
-   "baseline": null,
-   "baseline_ms": 0.000100000761449337
+   "disputegraph_ms": 0.31779997516423464,
+   "baseline": [],
+   "baseline_ms": 162728.54109999025
   },
   {
    "id": 17,
    "planted": [],
    "disputegraph": [],
-   "disputegraph_ms": 0.22119999630376697,
-   "baseline": null,
-   "baseline_ms": 0.000100000761449337
+   "disputegraph_ms": 0.24359999224543571,
+   "baseline": [],
+   "baseline_ms": 32405.902400030755
   },
   {
    "id": 18,
@@ -217,9 +244,12 @@
     "amount_mismatch",
     "delivery_contradiction"
    ],
-   "disputegraph_ms": 0.19399996381253004,
-   "baseline": null,
-   "baseline_ms": 0.000100000761449337
+   "disputegraph_ms": 0.37480000173673034,
+   "baseline": [
+    "amount_mismatch",
+    "delivery_contradiction"
+   ],
+   "baseline_ms": 21148.684700019658
   },
   {
    "id": 19,
@@ -231,17 +261,19 @@
     "amount_mismatch",
     "early_ship"
    ],
-   "disputegraph_ms": 0.18839997937902808,
-   "baseline": null,
-   "baseline_ms": 0.000200001522898674
+   "disputegraph_ms": 0.2536000101827085,
+   "baseline": [
+    "early_ship"
+   ],
+   "baseline_ms": 105422.85929998616
   },
   {
    "id": 20,
    "planted": [],
    "disputegraph": [],
-   "disputegraph_ms": 0.18510001245886087,
-   "baseline": null,
-   "baseline_ms": 0.000100000761449337
+   "disputegraph_ms": 0.2750999992713332,
+   "baseline": [],
+   "baseline_ms": 22717.241100035608
   }
  ]
 }

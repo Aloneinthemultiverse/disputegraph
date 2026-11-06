@@ -1,0 +1,4 @@
+{
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "text": "The order references invoice ID INV-DEMO0004 matching across two merchant documents [F0]\nThe order is also identified by custom ID ORDER-D0004 matching across two merchant documents [F1]\nThe transaction amount of 420.00 matches the PayPal capture [F2]\nThe item was shipped on 2026-10-28, on or after the PayPal capture date [F6]"
+}

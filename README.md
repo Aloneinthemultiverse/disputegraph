@@ -82,12 +82,14 @@ Sandbox test logins (sandbox only, not real accounts) are in the Devpost submiss
 
 `python eval/run_eval.py` generates 20 synthetic cases with 24 planted issues and known answers. It scores DisputeGraph, and a single LLM reading the raw records when an LLM key is set.
 
-| | Precision | Recall | Exact cases |
-|---|---|---|---|
-| DisputeGraph (deterministic checks) | 1.00 | 1.00 | 20/20 |
-| Single LLM on raw docs | run with your key | | |
+| | Precision | Recall | Missed issues | Exact cases | Avg time per case |
+|---|---|---|---|---|---|
+| **DisputeGraph** (deterministic checks + gate) | 1.00 | **1.00** | 0 / 24 | **20/20** | < 1 ms |
+| Single LLM reading the raw records (Nemotron 3.5 Lightning via NVIDIA NIM) | 1.00 | 0.63 | 9 / 24 | 14/20 | ~51 s |
 
-These cases use the document formats the rules were written for, so 100% is an **upper bound**, not a real-world claim. The point of the comparison is that IDs, amounts and dates are checked by code, not guessed.
+The single LLM never raised a false alarm, but it **missed 9 of the 24 planted issues**: amount mismatches, unsupported delivery claims, and in one case everything. It does worst on cases with several problems at once, which matches the FinBalance finding that LLMs struggle to tie entries across documents.
+
+These cases use the document formats the rules were written for, so DisputeGraph's 100% is an **upper bound**, not a real-world claim. The point is that IDs, amounts and dates are checked by code, and the LLM is kept to wording. Raw results are in `eval/results.json`.
 
 ## Architecture
 
@@ -109,7 +111,7 @@ More detail is in `arch.md` and `plan.md`.
 ## Tools used
 
 - **PayPal:** REST APIs (Orders v2, Payments v2, Disputes v1, webhook verification) on the sandbox.
-- **AI:** any OpenAI-compatible LLM, used for fuzzy-claim reading and the citation-locked summary. Responses are cached in `data/llm_cache/` for the hosted demo.
+- **AI:** NVIDIA NIM (`nvidia/nemotron-3.5-lightning-30b-a3b`), or any OpenAI-compatible LLM, used for fuzzy-claim reading and the citation-locked summary. Responses are cached in `data/llm_cache/` for the hosted demo.
 - **Stack:** Python, FastAPI, Pydantic, NetworkX; AG Grid Community for the investigation grid.
 - **Assessment gate:** ported from the author's TruthGuard project.
 

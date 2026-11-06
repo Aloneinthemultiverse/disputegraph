@@ -1,0 +1,4 @@
+{
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "text": "{\n  \"amount_mismatch\": \"PayPal capture amount is USD 454.07, while the merchant order sheet records an Order Total of USD 459.07 (the linked invoice INV-EVAL002 totals USD 454.07, matching PayPal, but the order sheet total differs from the PayPal amount).\",\n  \"early_ship\": \"Merchant ship date is 2026-10-10, which is before the PayPal capture date of 2026-10-12T09:00:00Z.\",\n  \"false_refund_claim\": \"Merchant emails state 'You have been refunded in full,' but the PayPal record shows \\\"refunds\\\": [] with no refund recorded.\"\n}"
+}

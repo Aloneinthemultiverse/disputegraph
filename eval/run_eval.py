@@ -24,6 +24,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
+from dotenv import load_dotenv  # noqa: E402
+load_dotenv(ROOT / ".env")
 from backend.disputegraph.llm import _chat  # noqa: E402
 from backend.disputegraph.merchant import extract  # noqa: E402
 from backend.disputegraph.model import Fact, Source  # noqa: E402
