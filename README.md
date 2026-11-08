@@ -46,7 +46,7 @@ DisputeGraph puts **what PayPal recorded** next to **what the merchant can prove
 | ⚖️ | **6 checks, in code** | Amount, IDs, address, timeline, tracking and delivery. Each gives one of six verdicts: `MATCH` `VALUE_MISMATCH` `CONTRADICTION` `TIME_MISMATCH` `UNSUPPORTED_CLAIM` `MISSING`. |
 | 📦 | **PayPal tracking check** | Is the merchant's tracking number actually on the PayPal transaction? Seller Protection depends on it. |
 | 🧭 | **Says what's missing** | Gaps become a to-do list, for example "no carrier record for 1Z…, so delivery can't be verified". |
-| 🕵️ | **Forged-evidence check** | Flags AI-made or edited proof: **C2PA Content Credentials**, AI-tool and editor metadata, PDF edit history, and photo noise inconsistencies (Error Level Analysis). It sends the file to a human and never rejects it automatically. |
+| 🕵️ | **Forged-evidence check** | Flags AI-made or edited proof: **C2PA Content Credentials**, AI-tool and editor metadata, PDF edit history, and photo noise inconsistencies (Error Level Analysis). An optional pixel-based AI-image model (**Sightengine**) is off by default and turns on when its key is set. It catches fakes whose metadata was stripped. A flag sends the file to a human; it never rejects a file automatically. |
 | 🔎 | **Sweep across cases** | Catches the same tracking number offered on two orders, and refunds the merchant claims that PayPal never recorded. |
 | ✋ | **Human approval** | Nothing is sent to PayPal until a person reviews it and signs off. |
 
@@ -113,7 +113,9 @@ Open http://localhost:8000. Demo mode replays cached sandbox responses and AI an
 2. Add a **US** sandbox app's Client ID and Secret, with *Customer disputes* and *Transaction search* ticked.
 3. Optionally add an LLM endpoint. NVIDIA NIM (`https://integrate.api.nvidia.com/v1`) is free, and any OpenAI-compatible endpoint works. Set `PAYPAL_USE_MCP=1` (needs Node.js) to read disputes through the PayPal MCP server.
 4. Optional OCR: `pip install rapidocr_onnxruntime`.
-5. Run `python -m uvicorn backend.app:app --port 8000`.
+5. Optional AI-image detection: set `SIGHTENGINE_API_USER` / `SIGHTENGINE_API_SECRET` (free tier). This sends evidence images to Sightengine.
+6. Check any file yourself: `python -m backend.disputegraph.tamper path/to/image.png`.
+7. Run `python -m uvicorn backend.app:app --port 8000`.
 
 To make a fresh sandbox dispute:
 1. Run `python scripts/sandbox_spike.py order`.

@@ -14,6 +14,8 @@ Signals, strongest first:
 4. Error Level Analysis (JPEG): a region that recompresses very differently
    from the rest of the image, typical of pasted-in text or numbers.
 
+5. Optional pixel model (Sightengine genai), off unless its API key is set.
+
 Not covered (said plainly): watermark-only detectors such as Google SynthID
 have no public image API, and a clean screenshot of a fake carries no metadata.
 """
@@ -133,6 +135,44 @@ def _pdf(path: Path) -> list[dict]:
     return out
 
 
+def _pixel_ai(path: Path) -> list[dict]:
+    """Optional, OFF by default: Sightengine's pixel-based AI-image model (genai).
+    It ignores metadata, so it still works when a fake was screenshotted or stripped.
+    Runs only when SIGHTENGINE_API_USER and SIGHTENGINE_API_SECRET are set, because it
+    sends the merchant's image to a third party."""
+    import os
+    user, secret = os.environ.get("SIGHTENGINE_API_USER"), os.environ.get("SIGHTENGINE_API_SECRET")
+    if not (user and secret) or os.environ.get("DEMO_MODE") == "1":
+        return []
+    cache = Path(__file__).resolve().parents[2] / "data" / "ai_image_cache"
+    cache.mkdir(parents=True, exist_ok=True)
+    import hashlib
+    hit = cache / (hashlib.sha256(path.read_bytes()).hexdigest()[:24] + ".json")
+    if hit.exists():
+        score = json.loads(hit.read_text())["ai_generated"]
+    else:
+        import requests
+        try:
+            with open(path, "rb") as fh:
+                r = requests.post("https://api.sightengine.com/1.0/check.json", timeout=60,
+                                  files={"media": fh},
+                                  data={"models": "genai", "api_user": user, "api_secret": secret})
+            body = r.json()
+            score = float(body["type"]["ai_generated"])
+        except Exception:
+            return [{"signal": "pixel_ai_unavailable", "severity": "info",
+                     "detail": "AI-image detection service could not be reached"}]
+        hit.write_text(json.dumps({"ai_generated": score}))
+    if score >= 0.9:
+        return [{"signal": "pixel_ai", "severity": "high",
+                 "detail": f"AI-image model: {score:.0%} likely generated or edited by AI (Sightengine)"}]
+    if score >= 0.5:
+        return [{"signal": "pixel_ai", "severity": "medium",
+                 "detail": f"AI-image model: {score:.0%} likely AI (Sightengine); check by eye"}]
+    return [{"signal": "pixel_ai", "severity": "info",
+             "detail": f"AI-image model: {score:.0%} likely AI (Sightengine)"}]
+
+
 IMAGE = {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".webp", ".bmp"}
 
 
@@ -143,7 +183,7 @@ def scan(path: Path) -> dict:
     try:
         ext = path.suffix.lower()
         if ext in IMAGE:
-            signals = _c2pa(path) + _image_meta(path) + _ela(path)
+            signals = _c2pa(path) + _image_meta(path) + _ela(path) + _pixel_ai(path)
         elif ext == ".pdf":
             signals = _c2pa(path) + _pdf(path)
     except Exception as e:  # a damaged file is itself worth a look
@@ -156,3 +196,15 @@ def scan(path: Path) -> dict:
 def scan_folder(folder: Path) -> list[dict]:
     return [scan(p) for p in sorted(Path(folder).glob("*"))
             if p.suffix.lower() in IMAGE | {".pdf"}]
+
+
+if __name__ == "__main__":  # python -m backend.disputegraph.tamper <file-or-folder> ...
+    import sys
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).resolve().parents[2] / ".env")
+    for arg in sys.argv[1:]:
+        p = Path(arg)
+        for r in (scan_folder(p) if p.is_dir() else [scan(p)]):
+            print(f"{r['verdict']:10} {r['file']}")
+            for s in r["signals"]:
+                print(f"           [{s['severity']}] {s['detail']}")

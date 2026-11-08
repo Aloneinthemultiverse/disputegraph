@@ -9,3 +9,4 @@ graphify-out/
 video/assets/
 video/node_modules/
 video/.hyperframes/
+data/ai_image_cache/
