@@ -16,8 +16,9 @@ DisputeGraph puts two truths side by side: what PayPal recorded, and what the me
 2. **Reads the merchant's evidence:** text, PDFs, scanned receipts (OCR) and non-English documents (translated, with every number checked).
 3. **Checks six things in code:** amount, IDs, address, timeline, tracking and delivery. Each check gets a verdict that cites the exact API field or document line.
 4. **Says exactly what's missing,** for example "no carrier record for tracking 1Z…, so delivery can't be verified". That turns a vague case into a to-do list.
-5. **Sweeps across all cases,** catching things like the same tracking number offered in two disputes, or a refund the merchant claims that PayPal never recorded.
-6. **A human approves** before anything is sent to PayPal.
+5. **Checks PayPal's own tracking record** with the PayPal Shipment Tracking API: is the merchant's tracking number actually on the PayPal transaction? Seller Protection relies on this. In the sandbox it confirms tracking 1Z999AA10123456784 with status SHIPPED.
+6. **Sweeps across all cases,** catching things like the same tracking number offered in two disputes, or a refund the merchant claims that PayPal never recorded.
+7. **A human approves** before anything is sent to PayPal.
 
 ## Why judges can trust it
 - **AI never decides a number.** NVIDIA Nemotron only reads messy wording and writes the summary.
@@ -36,7 +37,7 @@ Almost every first-try failure came from reading messy input, not from the reaso
 **Limit:** real dispute data is private, so all testing used synthetic and sandbox cases.
 
 ## How we built it
-Python, FastAPI, NetworkX, a TurboVec 2-bit vector index with personalized PageRank retrieval, NVIDIA NIM (Nemotron), and the PayPal REST API and MCP server. It's deployed on Render, and the demo video was made with HyperFrames.
+Python, FastAPI, NetworkX, a TurboVec 2-bit vector index with personalized PageRank retrieval, NVIDIA NIM (Nemotron), and the PayPal REST APIs (Disputes, Payments, Orders, Shipment Tracking, provide-evidence, webhooks) and the PayPal MCP server. It's deployed on Render, and the demo video was made with HyperFrames.
 
 ## What's next
 - A pilot on real merchant disputes, with consent.
