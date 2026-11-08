@@ -267,7 +267,7 @@ Earlier, 100 cases were written independently by ChatGPT, DeepSeek, Qwen and Kim
 
 ## ⚠️ Limits
 
-- The forged-evidence check finds **signals, not proof**. Google SynthID has no public image API, and a screenshot of a fake carries no metadata. It has been tested on 9 files with known answers, including images **signed with real C2PA manifests** (`python bench/tamper/c2pa_test.py out/`), but not on real fraud cases yet.
+- The forged-evidence check finds **signals, not proof**. Google SynthID has no public image API, and a screenshot of a fake carries no metadata. It has been tested on 9 files with known answers, including images **signed with real C2PA manifests** (`python bench/tamper/c2pa_test.py out/`), and on a real ChatGPT-generated delivery photo with its metadata removed, which Sightengine scored at **99% AI**. It has not been tested on real fraud cases at scale.
 
 - Tested on synthetic and sandbox data only, because real dispute data is private.
 - Only **Item Not Received** disputes are supported.
