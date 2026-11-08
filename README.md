@@ -7,7 +7,7 @@
 **Merchants lose PayPal disputes they should win. DisputeGraph finds the proof, flags the gaps, and never makes a number up.**
 
 [![Live demo](https://img.shields.io/badge/live_demo-disputegraph.onrender.com-f5c56b?style=for-the-badge)](https://disputegraph.onrender.com)
-[![Video](https://img.shields.io/badge/demo_video-2:42-f06aa6?style=for-the-badge)](video/disputegraph-demo.mp4)
+[![Video](https://img.shields.io/badge/demo_video-2:59-f06aa6?style=for-the-badge)](video/disputegraph-demo.mp4)
 
 ![PayPal](https://img.shields.io/badge/PayPal-sandbox_+_MCP-003087?logo=paypal&logoColor=white)
 ![NVIDIA NIM](https://img.shields.io/badge/NVIDIA_NIM-Nemotron-76B900?logo=nvidia&logoColor=white)
