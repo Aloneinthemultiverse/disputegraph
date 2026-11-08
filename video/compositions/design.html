@@ -1,0 +1,64 @@
+<template>
+  <style>
+#root{position:absolute;inset:0;background:var(--ground);color:var(--ink);font-family:'Inter';overflow:hidden}
+.mono{font-family:'JetBrains Mono'}
+.serif{font-family:'Playfair Display'}
+.kicker{font-family:'JetBrains Mono';font-size:28px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.grad{background:linear-gradient(90deg,var(--amber),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pill{display:inline-block;font-family:'JetBrains Mono';font-size:28px;padding:10px 22px;border-radius:999px;border:2px solid currentColor}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:22px}
+.glow{position:absolute;inset:0;background:radial-gradient(1200px 600px at 70% -10%,rgba(245,197,107,.14),transparent 60%),radial-gradient(900px 500px at 0% 110%,rgba(240,106,166,.10),transparent 60%)}
+</style>
+  <div id="root" data-composition-id="design" data-width="1920" data-height="1080">
+    <div class="glow" data-layout-allow-overflow data-layout-ignore></div>
+
+    <div class="kicker" style="position:absolute;left:120px;top:90px">How it works</div>
+    <div id="des-pp" class="panel" style="position:absolute;left:120px;top:250px;width:330px;padding:30px"><div class="kicker">PayPal sandbox API</div><div class="mono" style="font-size:28px;margin-top:10px;color:var(--amber)">dispute · capture · order</div></div>
+    <div id="des-md" class="panel" style="position:absolute;left:120px;top:620px;width:330px;padding:30px"><div class="kicker">Merchant documents</div><div class="mono" style="font-size:28px;margin-top:10px;color:var(--pink)">invoice · emails · carrier</div></div>
+    <svg id="des-ln1" style="position:absolute;left:450px;top:300px" width="140" height="460"><path d="M0 40 C 80 40, 60 230, 140 230 M0 410 C 80 410, 60 230, 140 230" stroke="#4a443c" stroke-width="3" fill="none"/></svg>
+    <div id="des-f" class="panel" style="position:absolute;left:590px;top:455px;width:230px;padding:28px;text-align:center"><div class="serif" style="font-size:52px">Facts</div><div class="mono" style="font-size:28px;color:var(--muted);margin-top:6px">value + source line</div></div>
+    <div style="position:absolute;left:890px;top:250px;width:300px;display:flex;flex-direction:column;gap:18px">
+      <div id="des-c0" class="panel mono" style="padding:14px 22px;font-size:28px;text-align:center">amount</div>
+      <div id="des-c1" class="panel mono" style="padding:14px 22px;font-size:28px;text-align:center">IDs</div>
+      <div id="des-c2" class="panel mono" style="padding:14px 22px;font-size:28px;text-align:center">ship-to</div>
+      <div id="des-c3" class="panel mono" style="padding:14px 22px;font-size:28px;text-align:center">timeline</div>
+      <div id="des-c4" class="panel mono" style="padding:14px 22px;font-size:28px;text-align:center">tracking</div>
+      <div id="des-c5" class="panel mono" style="padding:14px 22px;font-size:28px;text-align:center">delivery</div>
+    </div>
+    <div class="kicker" id="des-ck" style="position:absolute;left:890px;top:200px">deterministic checks</div>
+    <div style="position:absolute;left:1270px;top:250px;width:520px;display:flex;flex-direction:column;gap:22px;align-items:flex-start">
+      <div id="des-v0" class="pill" style="color:var(--green);font-size:28px;text-align:center">MATCH</div>
+      <div id="des-v1" class="pill" style="color:var(--amber);font-size:28px;text-align:center">VALUE_MISMATCH</div>
+      <div id="des-v2" class="pill" style="color:var(--red);font-size:28px;text-align:center">CONTRADICTION</div>
+      <div id="des-v3" class="pill" style="color:var(--amber);font-size:28px;text-align:center">TIME_MISMATCH</div>
+      <div id="des-v4" class="pill" style="color:var(--pink);font-size:28px;text-align:center">UNSUPPORTED_CLAIM</div>
+      <div id="des-v5" class="pill" style="color:var(--muted);font-size:28px;text-align:center">MISSING</div>
+    </div>
+    <div id="des-cite" class="mono" style="position:absolute;left:1270px;top:860px;font-size:28px;color:var(--ink)">↳ every verdict cites its API field or document line</div>
+
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#des-pp", {opacity:0, y:0}, {opacity:1, y:0, duration:0.5, ease:"power3.out"}, 0.40);
+    tl.fromTo("#des-md", {opacity:0, y:0}, {opacity:1, y:0, duration:0.5, ease:"power3.out"}, 1.60);
+    tl.fromTo("#des-ln1", {opacity:0, y:0}, {opacity:1, y:0, duration:0.5, ease:"power3.out"}, 3.60);
+    tl.fromTo("#des-f", {opacity:0, y:0}, {opacity:1, y:0, duration:0.5, ease:"power3.out"}, 4.40);
+    tl.fromTo("#des-ck", {opacity:0, y:0}, {opacity:1, y:0, duration:0.5, ease:"power3.out"}, 6.20);
+    tl.fromTo("#des-c0", {opacity:0, y:0}, {opacity:1, y:0, duration:0.35, ease:"power3.out"}, 6.60);
+    tl.fromTo("#des-c1", {opacity:0, y:0}, {opacity:1, y:0, duration:0.35, ease:"power3.out"}, 7.15);
+    tl.fromTo("#des-c2", {opacity:0, y:0}, {opacity:1, y:0, duration:0.35, ease:"power3.out"}, 7.70);
+    tl.fromTo("#des-c3", {opacity:0, y:0}, {opacity:1, y:0, duration:0.35, ease:"power3.out"}, 8.25);
+    tl.fromTo("#des-c4", {opacity:0, y:0}, {opacity:1, y:0, duration:0.35, ease:"power3.out"}, 8.80);
+    tl.fromTo("#des-c5", {opacity:0, y:0}, {opacity:1, y:0, duration:0.35, ease:"power3.out"}, 9.35);
+    tl.fromTo("#des-v0", {opacity:0, y:0}, {opacity:1, y:0, duration:0.3, ease:"power3.out"}, 11.00);
+    tl.fromTo("#des-v1", {opacity:0, y:0}, {opacity:1, y:0, duration:0.3, ease:"power3.out"}, 11.30);
+    tl.fromTo("#des-v2", {opacity:0, y:0}, {opacity:1, y:0, duration:0.3, ease:"power3.out"}, 11.60);
+    tl.fromTo("#des-v3", {opacity:0, y:0}, {opacity:1, y:0, duration:0.3, ease:"power3.out"}, 11.90);
+    tl.fromTo("#des-v4", {opacity:0, y:0}, {opacity:1, y:0, duration:0.3, ease:"power3.out"}, 12.20);
+    tl.fromTo("#des-v5", {opacity:0, y:0}, {opacity:1, y:0, duration:0.3, ease:"power3.out"}, 12.50);
+    tl.fromTo("#des-cite", {opacity:0, y:10}, {opacity:1, y:0, duration:0.5, ease:"power3.out"}, 13.60);
+
+    tl.fromTo("#root .glow", {scale:1, x:0}, {scale:1.25, x:-120, duration:16.85, ease:"none"}, 0);
+    window.__timelines["design"] = tl;
+  </script>
+</template>

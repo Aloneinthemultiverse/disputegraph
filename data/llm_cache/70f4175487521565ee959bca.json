@@ -1,0 +1,4 @@
+{
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "text": "The order ID ORDER-E0005 matches across two merchant documents. [F1]  \nThe invoice ships to the address Denver 80202. [F4]  \nThe amount of 45.50 matches the PayPal capture. [F2]  \nNo ship date is found in any merchant document. [F5]  \nThe merchant claims a refund was issued, but PayPal shows no refund for this order. [F7]"
+}

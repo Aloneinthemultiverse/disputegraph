@@ -1,0 +1,4 @@
+{
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "text": "[{\"field\": \"amount\", \"value\": \"$70.00\"}]"
+}

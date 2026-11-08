@@ -1,0 +1,4 @@
+{
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "text": "The invoice ship-to address is Austin 78701. [F4]  \nThe uploaded courier tracking update address differs from the PayPal ship-to address. [F5]  \nThe carrier record tracking number 1Z999AA10123456784 does not match the merchant's shipped tracking number 9400111899223344556677, and the proof may be for a different parcel. [F9]  \nThe delivery scan is recorded after shipping and payment. [F10]"
+}

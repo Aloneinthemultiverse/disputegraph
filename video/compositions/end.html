@@ -1,0 +1,29 @@
+<template>
+  <style>
+#root{position:absolute;inset:0;background:var(--ground);color:var(--ink);font-family:'Inter';overflow:hidden}
+.mono{font-family:'JetBrains Mono'}
+.serif{font-family:'Playfair Display'}
+.kicker{font-family:'JetBrains Mono';font-size:28px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.grad{background:linear-gradient(90deg,var(--amber),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pill{display:inline-block;font-family:'JetBrains Mono';font-size:28px;padding:10px 22px;border-radius:999px;border:2px solid currentColor}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:22px}
+.glow{position:absolute;inset:0;background:radial-gradient(1200px 600px at 70% -10%,rgba(245,197,107,.14),transparent 60%),radial-gradient(900px 500px at 0% 110%,rgba(240,106,166,.10),transparent 60%)}
+</style>
+  <div id="root" data-composition-id="end" data-width="1920" data-height="1080">
+    <div class="glow" data-layout-allow-overflow data-layout-ignore></div>
+
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px">
+      <div id="en-a" class="mono" style="font-size:96px">~/dispute<span class="grad">graph</span></div>
+      <div id="en-b" class="serif" style="font-size:64px;font-style:italic">It doesn't guess. <span class="grad">It asks.</span></div>
+    </div>
+
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#en-a", {opacity:0, y:20}, {opacity:1, y:0, duration:0.6, ease:"power3.out"}, 0.20);
+    tl.fromTo("#en-b", {opacity:0, y:20}, {opacity:1, y:0, duration:0.6, ease:"power3.out"}, 1.10);
+
+    tl.fromTo("#root .glow", {scale:1, x:0}, {scale:1.25, x:-120, duration:4.89, ease:"none"}, 0);
+    window.__timelines["end"] = tl;
+  </script>
+</template>

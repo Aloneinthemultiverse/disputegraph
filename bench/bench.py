@@ -73,8 +73,13 @@ def _findings_to_labels(findings) -> set[str]:
     return out
 
 
+USE_LLM_EXTRACT = True
+
+
 def run_disputegraph(cases: list[dict]) -> dict[int, dict]:
-    orig, orig_map = merchant.classify_claim, merchant.map_label
+    orig, orig_map, orig_ext = merchant.classify_claim, merchant.map_label, merchant.extract_fields
+    if not USE_LLM_CLAIMS or not USE_LLM_EXTRACT:  # ablation: no verified LLM field extraction
+        merchant.extract_fields = lambda line: []
     if not USE_LLM_CLAIMS:  # ablation: regex-only extraction, no AI
         merchant.classify_claim = lambda line: None
         merchant.map_label = lambda label: None
@@ -92,7 +97,7 @@ def run_disputegraph(cases: list[dict]) -> dict[int, dict]:
                 labels, err = set(), traceback.format_exc(limit=2)
             out[c["id"]] = {"pred": labels, "ms": (time.perf_counter() - t) * 1000, "error": err}
     finally:
-        merchant.classify_claim, merchant.map_label = orig, orig_map
+        merchant.classify_claim, merchant.map_label, merchant.extract_fields = orig, orig_map, orig_ext
     # cross-case: the same tracking number offered as proof for different orders
     for ids in tracking_reuse(facts_by_case).values():
         for i in ids:
@@ -234,10 +239,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--llm", type=int, default=0, help="LLM baseline sample size")
     ap.add_argument("--external", action="store_true")
+    ap.add_argument("--no-extract", action="store_true", help="AI on, but no verified LLM field extraction")
     ap.add_argument("--ai", action="store_true", help="LLM label mapping + claim reading (cached; run prewarm.py first)")
     a = ap.parse_args()
     global USE_LLM_CLAIMS
     USE_LLM_CLAIMS = a.ai
+    global USE_LLM_EXTRACT
+    USE_LLM_EXTRACT = not a.no_extract
     cases = load(HERE / "cases.jsonl")
     out = {"generated": len(cases), "mode": "regex+llm" if a.ai else "regex-only"}
     t = time.perf_counter(); dg = run_disputegraph(cases); dg_s = time.perf_counter() - t
@@ -263,7 +271,7 @@ def main():
                 ecs.append(c)
             ext[p.stem] = summary("dg", ecs, run_disputegraph(ecs))
         out["external"] = ext
-    (HERE / ("results_ai.json" if a.ai else "results.json")).write_text(json.dumps(out, indent=1), encoding="utf-8")
+    (HERE / (("results_ai_noextract.json" if a.no_extract else "results_ai.json") if a.ai else "results.json")).write_text(json.dumps(out, indent=1), encoding="utf-8")
     for k in ("disputegraph", "keyword"):
         s = out[k]
         print(f"{k:13} exact {s['exact_accuracy']} {s['exact_accuracy_95ci']}  micro {s['micro']}  "

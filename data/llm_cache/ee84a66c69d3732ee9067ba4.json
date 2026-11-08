@@ -1,0 +1,4 @@
+{
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "text": "The invoice ID INV-DEMO0003 matches across two merchant documents.[F0]  \nThe custom order ID ORDER-C0003 matches across two merchant documents.[F1]  \nThe amount of 89.00 matches the PayPal capture, as recorded in two findings.[F2]  \nBoth the carrier tracking and invoice confirm the shipment destination as Portland 97205.[F4]  \nSources disagree on timing: one finding states shipment occurred before PayPal payment capture, while another states delivery scan occurred after shipping and payment.[F7]"
+}

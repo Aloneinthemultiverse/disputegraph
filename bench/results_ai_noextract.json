@@ -1,0 +1,751 @@
+{
+ "generated": 3000,
+ "mode": "regex+llm",
+ "disputegraph": {
+  "cases": 3000,
+  "exact_accuracy": 0.946,
+  "exact_accuracy_95ci": [
+   0.938,
+   0.954
+  ],
+  "micro": {
+   "precision": 0.998,
+   "recall": 0.946,
+   "f1": 0.971
+  },
+  "false_alarm_rate_on_clean": 0.003,
+  "errors": 0,
+  "latency_ms": {
+   "p50": 1.59,
+   "p95": 6.35,
+   "max": 221.92
+  },
+  "per_label": {
+   "amount_mismatch": {
+    "precision": 1.0,
+    "recall": 0.985,
+    "f1": 0.993,
+    "support": 406,
+    "fp": 0
+   },
+   "delivery_contradiction": {
+    "precision": 0.974,
+    "recall": 0.996,
+    "f1": 0.985,
+    "support": 262,
+    "fp": 7
+   },
+   "delivery_unsupported": {
+    "precision": 1.0,
+    "recall": 0.988,
+    "f1": 0.994,
+    "support": 347,
+    "fp": 0
+   },
+   "early_ship": {
+    "precision": 1.0,
+    "recall": 0.991,
+    "f1": 0.996,
+    "support": 338,
+    "fp": 0
+   },
+   "false_refund_claim": {
+    "precision": 1.0,
+    "recall": 0.851,
+    "f1": 0.919,
+    "support": 395,
+    "fp": 0
+   },
+   "ship_to_mismatch": {
+    "precision": 1.0,
+    "recall": 0.987,
+    "f1": 0.993,
+    "support": 374,
+    "fp": 0
+   },
+   "id_mismatch": {
+    "precision": 1.0,
+    "recall": 0.995,
+    "f1": 0.997,
+    "support": 398,
+    "fp": 0
+   },
+   "tracking_mismatch": {
+    "precision": 1.0,
+    "recall": 0.858,
+    "f1": 0.924,
+    "support": 113,
+    "fp": 0
+   },
+   "impossible_timeline": {
+    "precision": 1.0,
+    "recall": 0.928,
+    "f1": 0.963,
+    "support": 111,
+    "fp": 0
+   },
+   "tracking_reuse": {
+    "precision": 1.0,
+    "recall": 0.749,
+    "f1": 0.856,
+    "support": 231,
+    "fp": 0
+   }
+  },
+  "by_split": {
+   "dev": {
+    "n": 2109,
+    "exact": 0.983,
+    "micro_f1": 0.991
+   },
+   "heldout": {
+    "n": 891,
+    "exact": 0.859,
+    "micro_f1": 0.922
+   }
+  },
+  "by_family": {
+   "clean": {
+    "n": 566,
+    "exact": 0.996,
+    "micro_f1": 0.0
+   },
+   "multi": {
+    "n": 571,
+    "exact": 0.909,
+    "micro_f1": 0.98
+   },
+   "scam": {
+    "n": 494,
+    "exact": 0.86,
+    "micro_f1": 0.941
+   },
+   "single": {
+    "n": 929,
+    "exact": 0.959,
+    "micro_f1": 0.98
+   },
+   "trap": {
+    "n": 440,
+    "exact": 0.998,
+    "micro_f1": 0.0
+   }
+  },
+  "by_trap": {
+   "buyer_question": {
+    "n": 110,
+    "exact": 0.982,
+    "micro_f1": 0.75
+   },
+   "injection": {
+    "n": 96,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   },
+   "negation": {
+    "n": 82,
+    "exact": 0.988,
+    "micro_f1": 0.857
+   },
+   "other_order": {
+    "n": 94,
+    "exact": 0.979,
+    "micro_f1": 0.889
+   },
+   "real_refund": {
+    "n": 83,
+    "exact": 1.0,
+    "micro_f1": 1.0
+   }
+  },
+  "throughput_cases_per_s": 301.7
+ },
+ "keyword": {
+  "cases": 3000,
+  "exact_accuracy": 0.558,
+  "exact_accuracy_95ci": [
+   0.539,
+   0.576
+  ],
+  "micro": {
+   "precision": 0.894,
+   "recall": 0.552,
+   "f1": 0.682
+  },
+  "false_alarm_rate_on_clean": 0.177,
+  "errors": 0,
+  "latency_ms": {
+   "p50": 0.0,
+   "p95": 0.01,
+   "max": 0.38
+  },
+  "per_label": {
+   "amount_mismatch": {
+    "precision": null,
+    "recall": 0.0,
+    "f1": 0.0,
+    "support": 406,
+    "fp": 0
+   },
+   "delivery_contradiction": {
+    "precision": 0.969,
+    "recall": 0.969,
+    "f1": 0.969,
+    "support": 262,
+    "fp": 8
+   },
+   "delivery_unsupported": {
+    "precision": 1.0,
+    "recall": 0.974,
+    "f1": 0.987,
+    "support": 347,
+    "fp": 0
+   },
+   "early_ship": {
+    "precision": null,
+    "recall": 0.0,
+    "f1": 0.0,
+    "support": 338,
+    "fp": 0
+   },
+   "false_refund_claim": {
+    "precision": 0.597,
+    "recall": 0.701,
+    "f1": 0.645,
+    "support": 395,
+    "fp": 187
+   },
+   "ship_to_mismatch": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 374,
+    "fp": 0
+   },
+   "id_mismatch": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "support": 398,
+    "fp": 0
+   },
+   "tracking_mismatch": {
+    "precision": null,
+    "recall": 0.0,
+    "f1": 0.0,
+    "support": 113,
+    "fp": 0
+   },
+   "impossible_timeline": {
+    "precision": null,
+    "recall": 0.0,
+    "f1": 0.0,
+    "support": 111,
+    "fp": 0
+   },
+   "tracking_reuse": {
+    "precision": null,
+    "recall": 0.0,
+    "f1": 0.0,
+    "support": 231,
+    "fp": 0
+   }
+  },
+  "by_split": {
+   "dev": {
+    "n": 2109,
+    "exact": 0.594,
+    "micro_f1": 0.722
+   },
+   "heldout": {
+    "n": 891,
+    "exact": 0.474,
+    "micro_f1": 0.58
+   }
+  },
+  "by_family": {
+   "clean": {
+    "n": 566,
+    "exact": 0.996,
+    "micro_f1": 0.0
+   },
+   "multi": {
+    "n": 571,
+    "exact": 0.31,
+    "micro_f1": 0.77
+   },
+   "scam": {
+    "n": 494,
+    "exact": 0.162,
+    "micro_f1": 0.435
+   },
+   "single": {
+    "n": 929,
+    "exact": 0.635,
+    "micro_f1": 0.776
+   },
+   "trap": {
+    "n": 440,
+    "exact": 0.6,
+    "micro_f1": 0.0
+   }
+  },
+  "by_trap": {
+   "buyer_question": {
+    "n": 110,
+    "exact": 0.955,
+    "micro_f1": 0.0
+   },
+   "injection": {
+    "n": 96,
+    "exact": 0.01,
+    "micro_f1": 0
+   },
+   "negation": {
+    "n": 82,
+    "exact": 0.939,
+    "micro_f1": 0
+   },
+   "other_order": {
+    "n": 94,
+    "exact": 0.021,
+    "micro_f1": 0
+   },
+   "real_refund": {
+    "n": 83,
+    "exact": 0.952,
+    "micro_f1": 0.0
+   }
+  }
+ },
+ "external": {
+  "chatgpt": {
+   "cases": 25,
+   "exact_accuracy": 1.0,
+   "exact_accuracy_95ci": [
+    1.0,
+    1.0
+   ],
+   "micro": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "false_alarm_rate_on_clean": 0.0,
+   "errors": 0,
+   "latency_ms": {
+    "p50": 3.19,
+    "p95": 7.72,
+    "max": 1135.01
+   },
+   "per_label": {
+    "amount_mismatch": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 3,
+     "fp": 0
+    },
+    "delivery_contradiction": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "delivery_unsupported": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "early_ship": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "false_refund_claim": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "ship_to_mismatch": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "id_mismatch": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 3,
+     "fp": 0
+    },
+    "tracking_mismatch": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "impossible_timeline": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "tracking_reuse": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0,
+     "fp": 0
+    }
+   },
+   "by_split": {
+    "external": {
+     "n": 25,
+     "exact": 1.0,
+     "micro_f1": 1.0
+    }
+   },
+   "by_family": {
+    "chatgpt": {
+     "n": 25,
+     "exact": 1.0,
+     "micro_f1": 1.0
+    }
+   },
+   "by_trap": {}
+  },
+  "deepseek": {
+   "cases": 25,
+   "exact_accuracy": 1.0,
+   "exact_accuracy_95ci": [
+    1.0,
+    1.0
+   ],
+   "micro": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "false_alarm_rate_on_clean": 0.0,
+   "errors": 0,
+   "latency_ms": {
+    "p50": 1.21,
+    "p95": 2.56,
+    "max": 2.6
+   },
+   "per_label": {
+    "amount_mismatch": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 4,
+     "fp": 0
+    },
+    "delivery_contradiction": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 3,
+     "fp": 0
+    },
+    "delivery_unsupported": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 1,
+     "fp": 0
+    },
+    "early_ship": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 3,
+     "fp": 0
+    },
+    "false_refund_claim": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "ship_to_mismatch": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "id_mismatch": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 3,
+     "fp": 0
+    },
+    "tracking_mismatch": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "impossible_timeline": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 1,
+     "fp": 0
+    },
+    "tracking_reuse": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0,
+     "fp": 0
+    }
+   },
+   "by_split": {
+    "external": {
+     "n": 25,
+     "exact": 1.0,
+     "micro_f1": 1.0
+    }
+   },
+   "by_family": {
+    "deepseek": {
+     "n": 25,
+     "exact": 1.0,
+     "micro_f1": 1.0
+    }
+   },
+   "by_trap": {}
+  },
+  "kimi": {
+   "cases": 25,
+   "exact_accuracy": 0.88,
+   "exact_accuracy_95ci": [
+    0.76,
+    1.0
+   ],
+   "micro": {
+    "precision": 1.0,
+    "recall": 0.857,
+    "f1": 0.923
+   },
+   "false_alarm_rate_on_clean": 0.0,
+   "errors": 0,
+   "latency_ms": {
+    "p50": 0.67,
+    "p95": 9.99,
+    "max": 12.25
+   },
+   "per_label": {
+    "amount_mismatch": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 3,
+     "fp": 0
+    },
+    "delivery_contradiction": {
+     "precision": 1.0,
+     "recall": 0.667,
+     "f1": 0.8,
+     "support": 3,
+     "fp": 0
+    },
+    "delivery_unsupported": {
+     "precision": null,
+     "recall": 0.0,
+     "f1": 0.0,
+     "support": 2,
+     "fp": 0
+    },
+    "early_ship": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "false_refund_claim": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "ship_to_mismatch": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "id_mismatch": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "tracking_mismatch": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 3,
+     "fp": 0
+    },
+    "impossible_timeline": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "tracking_reuse": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0,
+     "fp": 0
+    }
+   },
+   "by_split": {
+    "external": {
+     "n": 25,
+     "exact": 0.88,
+     "micro_f1": 0.923
+    }
+   },
+   "by_family": {
+    "kimi": {
+     "n": 25,
+     "exact": 0.88,
+     "micro_f1": 0.923
+    }
+   },
+   "by_trap": {}
+  },
+  "qwen": {
+   "cases": 25,
+   "exact_accuracy": 1.0,
+   "exact_accuracy_95ci": [
+    1.0,
+    1.0
+   ],
+   "micro": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+   },
+   "false_alarm_rate_on_clean": 0.0,
+   "errors": 0,
+   "latency_ms": {
+    "p50": 0.94,
+    "p95": 4.69,
+    "max": 5.85
+   },
+   "per_label": {
+    "amount_mismatch": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 3,
+     "fp": 0
+    },
+    "delivery_contradiction": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 3,
+     "fp": 0
+    },
+    "delivery_unsupported": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "early_ship": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "false_refund_claim": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "ship_to_mismatch": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 3,
+     "fp": 0
+    },
+    "id_mismatch": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 3,
+     "fp": 0
+    },
+    "tracking_mismatch": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "impossible_timeline": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 2,
+     "fp": 0
+    },
+    "tracking_reuse": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0,
+     "fp": 0
+    }
+   },
+   "by_split": {
+    "external": {
+     "n": 25,
+     "exact": 1.0,
+     "micro_f1": 1.0
+    }
+   },
+   "by_family": {
+    "qwen": {
+     "n": 25,
+     "exact": 1.0,
+     "micro_f1": 1.0
+    }
+   },
+   "by_trap": {}
+  }
+ }
+}

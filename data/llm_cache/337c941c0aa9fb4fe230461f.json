@@ -1,0 +1,4 @@
+{
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "text": "The invoice ships to Denver 80202 [F4]\nThe capture time or ship date is missing from the evidence [F5]\nNo carrier record appears in the merchant evidence [F6]\nThe merchant claims a refund was issued, but PayPal shows no refund for this order [F7]\nThe amount of 45.50 matches the PayPal capture [F2]"
+}

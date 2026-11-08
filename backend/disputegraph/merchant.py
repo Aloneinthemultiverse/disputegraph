@@ -17,7 +17,8 @@ import re
 from collections import Counter
 from pathlib import Path
 
-from .llm import classify_claim, map_label
+from . import freeform
+from .llm import classify_claim, extract_fields, map_label
 from .model import Fact, Source
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -25,7 +26,7 @@ MERCHANT = ROOT / "data" / "merchant"
 
 # "Label: value" lines -> canonical field
 LABELS = {
-    r"invoice no": "invoice_id",
+    r"invoice no|invoice number|invoice id|doc ref": "invoice_id",
     r"order ref": "custom_id",
     r"total due|order total": "amount",
     r"tracking": "tracking",
@@ -39,13 +40,26 @@ LINE = re.compile(r"^\s*([A-Za-z /]+?)\s*:\s*(.+?)\s*$")
 SCAN = re.compile(r"^(\d{4}-\d{2}-\d{2})(?: (\d{2}:\d{2}))?\s+(.+)$")
 DATE = re.compile(r"^Date:\s*(\d{4}-\d{2}-\d{2})", re.M)
 CLAIMS = [  # free-text claims in emails / notes
-    (re.compile(r"\b(was|were|has been|marked) delivered\b", re.I), "delivery_status", "Delivered"),
+    (re.compile(r"^(?!.*\?)(?!.*\b(not|never|no)\b[^.]{0,20}deliver).*(\b(was|were|has been|have been|marked( as)?|"
+                r"it is|is|successfully|status:?|shows?( it was)?|says?) delivered\b|\bdelivered (successfully|to "
+                r"(you|customer|your))|\bdelivered:\s*yes|\b(item|package|parcel|order|everything)( was)? delivered\b|"
+                r"\bdelivered (already|in good order|to (the )?(buyer|customer|client|recipient))|\b(completed|directly)"
+                r" and delivered\b|^\s*delivered\b)", re.I), "delivery_status", "Delivered"),
     (re.compile(r"\bshipped (today|on)\b", re.I), "shipped_claim", "Shipped"),
-    (re.compile(r"\b(have|has|was|were) (been )?refunded\b|\bissued (a|the|your) refund\b", re.I),
+    (re.compile(r"^(?!.*\?)(?!.*\b(no|never|not|want|nothing)\b[^.]{0,25}refund).*(\b(have|has|was|were|already|we)"
+                r"( already)? (been )?refunded\b|\bissued (a|the|your)( full| partial)? refund\b|\brefund"
+                r"( of \$?[\d.,]+)? (issued|processed|sent|already sent)|\bprocessed a( full)? refund|\brefunded "
+                r"(in full|you|the buyer)|\brefund status: refunded|\brefunded \$|\bcredited\b.{0,40}\bback\b|\bfully refunded|\b(issued|sent|processed)\b[^.]{0,30}\brefund\b|"
+                r"\brefund (already )?(sent|completed)\b)", re.I),
      "refund_claim", "Refunded"),
 ]
 LLM_FIELD = {"DELIVERED": ("delivery_status", "Delivered"), "SHIPPED": ("shipped_claim", "Shipped"),
              "REFUNDED": ("refund_claim", "Refunded")}
+INJECTION = re.compile(r"\b(ignore|disregard) (all |any )?(previous|prior|above) (rules|instructions)|"
+                       r"^\s*(system|assistant)\s*:|\bmark (this|it) as\b", re.I)
+OTHER_ORDER = re.compile(r"^\s*(fwd?|fw|forwarded)\b|\b(different|another|other|unrelated) (order|purchase|merchant)\b",
+                         re.I)
+ID_RUN = re.compile(r"[A-Z0-9][A-Z0-9/_-]*\d[A-Z0-9/_-]*(?: [A-Z0-9-]*\d[A-Z0-9-]*)*")
 AMOUNT = re.compile(r"([\d,]+\.\d{2})")
 
 
@@ -84,12 +98,41 @@ def _norm(field: str, value: str):
         return m.group(1).replace(",", "") if m else value
     if field == "shipped_at":
         return to_iso(value)
+    if field in ("tracking", "invoice_id"):  # "INV-023. Amount payable: ..." -> "INV-023"
+        m = ID_RUN.search(value)
+        return m.group(0).rstrip(".") if m else value
     return value
+
+
+ONES = "one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty"
+TENS = "thirty|forty|fifty|sixty|seventy|eighty|ninety|twenty"
+_NUM = {w: i for i, w in enumerate("zero one two three four five six seven eight nine ten eleven twelve".split())}
+_NUM.update(fifteen=15, twenty=20, thirty=30, forty=40, fifty=50, sixty=60, seventy=70, eighty=80, ninety=90)
+
+
+def _words(s: str) -> float:
+    return float(sum(_NUM[w] for w in re.split(r"[ -]", s.lower())))
+
+
+def _refund_value(line: str) -> str:
+    """'Refunded' plus what the line says about size: 'Refunded full' or 'Refunded 50.00'."""
+    word = re.search(r"refund", line, re.I)
+    nums = [(abs(m.start() - word.start()) if word else 0, m[1] or m[2])
+            for m in re.finditer(r"\$\s?([\d,]+(?:\.\d{1,2})?)|\b([\d,]+\.\d{2})\b", line)]
+    if nums:  # a stated amount (the one nearest "refund") is the claim; compared with PayPal's refunds
+        return f"Refunded {min(nums)[1].replace(',', '')}"
+    if w := re.search(rf"\b((?:{TENS})(?:[ -](?:{ONES}))?|{ONES})\s+dollars\b", line, re.I):
+        return f"Refunded {_words(w[1]):.2f}"
+    if re.search(r"\b(fully|in full|full refund|entire (order|amount)|100%|complete refund)\b", line, re.I):
+        return "Refunded full"
+    return "Refunded"
 
 
 def extract(invoice_id: str, pages: list[dict] | None = None) -> list[Fact]:
     facts: list[Fact] = []
-    for p in (pages if pages is not None else load_pages(invoice_id)):
+    pages = pages if pages is not None else load_pages(invoice_id)
+    hint = freeform.date_hint([p["text"] for p in pages])
+    for p in pages:
         ent = f"merchant:{p['doc']}"
         ref = f"{invoice_id}/{p['doc']}.md"
         dated = DATE.search(p["text"])
@@ -110,18 +153,85 @@ def extract(invoice_id: str, pages: list[dict] | None = None) -> list[Fact]:
                 if field:
                     facts.append(Fact(entity=ent, field=field, value=_norm(field, m.group(2)),
                                       observed_at=at, source=src, method=method))
+                    continue
+                # "Seller: we refunded you" -- a speaker, not a field: read it as a sentence below
+            if INJECTION.search(line) or OTHER_ORDER.search(line):  # not evidence about this order
                 continue
             hit = False
             for pat, field, val in CLAIMS:
                 if pat.search(line):
                     hit = True
-                    facts.append(Fact(entity=ent, field=field, value=val,
-                                      observed_at=at, source=src))
+                    facts.append(Fact(entity=ent, field=field, value=_refund_value(line) if
+                                      field == "refund_claim" else val, observed_at=at, source=src))
             if not hit and (word := classify_claim(line)):  # fuzzy wording -> LLM
                 field, val = LLM_FIELD[word]
+                val = _refund_value(line) if field == "refund_claim" else val
                 facts.append(Fact(entity=ent, field=field, value=val, observed_at=at,
                                   source=src, method="llm"))
+        seen = {(f.entity, f.field, str(f.value)) for f in facts}
+        dated_scans = any(f.entity == ent and f.field == "scan" for f in facts)
+        for f in freeform.read(p, ent, ref, hint):  # facts written as sentences
+            if f.field == "scan" and dated_scans:  # the carrier's own dated scans win
+                continue
+            if f.field == "scan" or (f.entity, f.field, str(f.value)) not in seen:
+                facts.append(f)
+        facts += _llm_verified(p, ent, ref, hint, {f.source.pointer for f in facts if f.entity == ent})
     return facts
+
+
+# only lines holding something a check could use: an ID-like token or a money amount
+WORTH_ASKING = re.compile(r"\b(?=[A-Z0-9-]*\d)(?=[A-Z0-9-]*[A-Z])[A-Z0-9-]{6,}\b|\b\d{7,}\b|\d+\.\d{2}\b")
+
+
+TOTAL_LINE = re.compile(r"\b(grand )?total\b|amount (due|payable|paid|charged)|\bbalance due\b|\bcharged\b|"
+                        r"\bpaid\b|\bcollected\b", re.I)
+SHIP_LINE = re.compile(r"\b(ship|shipped|shipping|dispatch\w*|sent|went out|left|collected|picked up|handed|posted"
+                       r"|mailed|despachado|enviado)\b", re.I)
+INVOICE_LINE = re.compile(r"\b(invoice|inv|bill|receipt|factura|doc(ument)? ref)\b", re.I)
+
+
+def _verify(field: str, value: str, line: str, hint):
+    """Keep an LLM-proposed value only if it is really in the line and has the field's shape."""
+    squash = lambda s: re.sub(r"\s+", " ", s).strip().lower()
+    if not value or squash(value) not in squash(line):
+        return None  # invented, not copied
+    if field == "invoice_id" and not INVOICE_LINE.search(line):  # manifest / order refs are not invoices
+        return None
+    if field in ("tracking", "invoice_id"):
+        core = re.sub(r"[^A-Za-z0-9]", "", value)
+        ok = len(core) >= (6 if field == "tracking" else 3) and re.search(r"\d", core) \
+            and not freeform.dates_in(value, hint)
+        return value if ok else None
+    if field == "amount":
+        if not TOTAL_LINE.search(line):  # an item price or shipping fee is not the order total
+            return None
+        m = re.fullmatch(r"(?:usd|us\$|\$)?\s*([\d,]+(?:\.\d{1,2})?)\s*(?:usd)?", value.strip(), re.I)
+        return m.group(1).replace(",", "") if m else None
+    if field == "shipped_at":
+        if not SHIP_LINE.search(line):  # a printed label or order date is not a shipment
+            return None
+        ds = freeform.dates_in(value, hint)
+        return ds[0][1].isoformat() if ds else None
+    if field == "ship_to":
+        return line.strip() if re.search(r"[A-Za-z]{3}", value) else None
+    return None
+
+
+def _llm_verified(page, ent, ref, hint, covered) -> list[Fact]:
+    """Last resort for lines nothing else could read: the LLM proposes, code verifies."""
+    if not any(k in page["doc"] for k in ("invoice", "order_sheet", "courier_tracking")):
+        return []
+    out = []
+    for i, line in enumerate(page["text"].splitlines(), 1):
+        ptr = f"page {page['page']}, line {i}"
+        if ptr in covered or not WORTH_ASKING.search(line) or SCAN.match(line.strip()) \
+                or INJECTION.search(line) or OTHER_ORDER.search(line):
+            continue
+        for field, value in extract_fields(line):
+            if (v := _verify(field, value, line, hint)) is not None:
+                out.append(Fact(entity=ent, field=field, value=v, source=Source(
+                    side="merchant", ref=ref, pointer=ptr), method="llm-verified"))
+    return out
 
 
 class BM25:

@@ -1,0 +1,31 @@
+<template>
+  <style>
+#root{position:absolute;inset:0;background:var(--ground);color:var(--ink);font-family:'Inter';overflow:hidden}
+.mono{font-family:'JetBrains Mono'}
+.serif{font-family:'Playfair Display'}
+.kicker{font-family:'JetBrains Mono';font-size:28px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.grad{background:linear-gradient(90deg,var(--amber),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pill{display:inline-block;font-family:'JetBrains Mono';font-size:28px;padding:10px 22px;border-radius:999px;border:2px solid currentColor}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:22px}
+.glow{position:absolute;inset:0;background:radial-gradient(1200px 600px at 70% -10%,rgba(245,197,107,.14),transparent 60%),radial-gradient(900px 500px at 0% 110%,rgba(240,106,166,.10),transparent 60%)}
+</style>
+  <div id="root" data-composition-id="twist" data-width="1920" data-height="1080">
+    <div class="glow" data-layout-allow-overflow data-layout-ignore></div>
+
+    <div id="twist-cam" style="position:absolute;left:0;top:0;width:1920px;height:1200px;transform-origin:0 0">
+      <img id="twist-img" src="assets/shots/07-after-top.png" style="position:absolute;left:0;top:0;width:1920px;height:1200px;border-radius:18px;box-shadow:0 30px 120px rgba(0,0,0,.6)">
+      <div id="tw-hl1" style="position:absolute;left:1300px;top:180px;width:450px;height:100px;border:5px solid var(--green);border-radius:16px;box-shadow:0 0 40px var(--green)"></div>      <div id="tw-hl2" style="position:absolute;left:170px;top:670px;width:1080px;height:70px;border:5px solid var(--red);border-radius:16px;box-shadow:0 0 40px var(--red)"></div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#twist-cam", {x:148, y:62, scale:0.8460, opacity:0}, {x:148, y:32, scale:0.8460, opacity:1, duration:0.7, ease:"power3.out"}, 0);
+    tl.to("#twist-cam", {x:-1407, y:137, scale:1.55, duration:1.4, ease:"power2.inOut"}, 0.90);
+    tl.to("#twist-cam", {x:-55, y:-475, scale:1.45, duration:1.4, ease:"power2.inOut"}, 5.20);
+    tl.fromTo("#tw-hl1", {opacity:0, y:0}, {opacity:1, y:0, duration:0.35, ease:"power3.out"}, 2.40);
+    tl.fromTo("#tw-hl2", {opacity:0, y:0}, {opacity:1, y:0, duration:0.35, ease:"power3.out"}, 6.90);
+
+    tl.fromTo("#root .glow", {scale:1, x:0}, {scale:1.25, x:-120, duration:12.07, ease:"none"}, 0);
+    window.__timelines["twist"] = tl;
+  </script>
+</template>

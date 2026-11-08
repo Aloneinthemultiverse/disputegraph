@@ -1,0 +1,4 @@
+{
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "text": "[{\"field\": \"tracking\", \"value\": \"9205590164917300291823\"}]"
+}

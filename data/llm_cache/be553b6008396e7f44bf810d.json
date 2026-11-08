@@ -1,0 +1,4 @@
+{
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "text": "The merchant order sheet records $760.00 but PayPal captured $750.00, a $10.00 difference [F3]\nThe email address on file differs from PayPal [F6]\nThe merchant claims the package was delivered, but the carrier record shows 'In Transit' [F10]\nPayPal shows a refund/reversal of $723.33, but the merchant has no record of it [F11]"
+}

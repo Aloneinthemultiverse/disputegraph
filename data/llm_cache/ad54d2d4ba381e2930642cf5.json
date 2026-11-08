@@ -1,0 +1,4 @@
+{
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "text": "[{\"field\": \"invoice_id\", \"value\": \"INV-30277\"}, {\"field\": \"amount\", \"value\": \"$175.00\"}, {\"field\": \"shipped_at\", \"value\": \"2026-10-16\"}]"
+}

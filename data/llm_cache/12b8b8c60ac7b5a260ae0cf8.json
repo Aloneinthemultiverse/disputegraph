@@ -1,0 +1,4 @@
+{
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "text": "The invoice identifier INV-DEMO0004 matches across two merchant documents. [F0]  \nThe custom order reference ORDER-D0004 matches across two merchant documents. [F1]  \nThe transaction amount of 420.00 matches the PayPal capture record. [F2]  \nThe courier tracking address shows delivery to Seattle 98101. [F4]  \nThe shipment was recorded as sent on 2026-10-28, on or after the capture date. [F7]"
+}

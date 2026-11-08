@@ -1,0 +1,34 @@
+<template>
+  <style>
+#root{position:absolute;inset:0;background:var(--ground);color:var(--ink);font-family:'Inter';overflow:hidden}
+.mono{font-family:'JetBrains Mono'}
+.serif{font-family:'Playfair Display'}
+.kicker{font-family:'JetBrains Mono';font-size:28px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.grad{background:linear-gradient(90deg,var(--amber),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pill{display:inline-block;font-family:'JetBrains Mono';font-size:28px;padding:10px 22px;border-radius:999px;border:2px solid currentColor}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:22px}
+.glow{position:absolute;inset:0;background:radial-gradient(1200px 600px at 70% -10%,rgba(245,197,107,.14),transparent 60%),radial-gradient(900px 500px at 0% 110%,rgba(240,106,166,.10),transparent 60%)}
+</style>
+  <div id="root" data-composition-id="results" data-width="1920" data-height="1080">
+    <div class="glow" data-layout-allow-overflow data-layout-ignore></div>
+
+    <div class="kicker" style="position:absolute;left:150px;top:230px">Blind tests · cases we had never seen</div>
+    <div style="position:absolute;left:150px;right:150px;top:360px;display:flex;gap:50px">
+      <div id="rs-a" style="flex:1"><div class="serif" style="font-size:190px;line-height:1;color:var(--ink)">64%</div><div class="mono" style="font-size:28px;color:var(--muted);margin-top:18px">first try · batch 1 (48/75)</div></div>
+      <div id="rs-b" style="flex:1"><div class="serif" style="font-size:190px;line-height:1;color:var(--ink)">70%</div><div class="mono" style="font-size:28px;color:var(--muted);margin-top:18px">first try · final batch (35/50)</div></div>
+      <div id="rs-c" style="flex:1"><div class="serif" style="font-size:190px;line-height:1;color:var(--green)">155/159</div><div class="mono" style="font-size:28px;color:var(--muted);margin-top:18px">after fixing each failure type</div></div>
+    </div>
+    <div id="rs-d" class="mono" style="position:absolute;left:150px;top:820px;font-size:46px">false alarms: <span style="color:var(--amber)">0.3%</span></div>
+
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#rs-a", {opacity:0, y:30}, {opacity:1, y:0, duration:0.5, ease:"power3.out"}, 3.30);
+    tl.fromTo("#rs-b", {opacity:0, y:30}, {opacity:1, y:0, duration:0.5, ease:"power3.out"}, 5.00);
+    tl.fromTo("#rs-c", {opacity:0, y:30}, {opacity:1, y:0, duration:0.5, ease:"power3.out"}, 9.00);
+    tl.fromTo("#rs-d", {opacity:0, y:20}, {opacity:1, y:0, duration:0.5, ease:"power3.out"}, 12.60);
+
+    tl.fromTo("#root .glow", {scale:1, x:0}, {scale:1.25, x:-120, duration:16.83, ease:"none"}, 0);
+    window.__timelines["results"] = tl;
+  </script>
+</template>

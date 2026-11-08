@@ -1,0 +1,38 @@
+<template>
+  <style>
+#root{position:absolute;inset:0;background:var(--ground);color:var(--ink);font-family:'Inter';overflow:hidden}
+.mono{font-family:'JetBrains Mono'}
+.serif{font-family:'Playfair Display'}
+.kicker{font-family:'JetBrains Mono';font-size:28px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.grad{background:linear-gradient(90deg,var(--amber),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pill{display:inline-block;font-family:'JetBrains Mono';font-size:28px;padding:10px 22px;border-radius:999px;border:2px solid currentColor}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:22px}
+.glow{position:absolute;inset:0;background:radial-gradient(1200px 600px at 70% -10%,rgba(245,197,107,.14),transparent 60%),radial-gradient(900px 500px at 0% 110%,rgba(240,106,166,.10),transparent 60%)}
+</style>
+  <div id="root" data-composition-id="failures" data-width="1920" data-height="1080">
+    <div class="glow" data-layout-allow-overflow data-layout-ignore></div>
+
+    <div class="kicker" style="position:absolute;left:150px;top:190px">Where it failed first</div>
+    <div style="position:absolute;left:150px;top:290px;display:flex;flex-direction:column;gap:42px">
+      <div id="fa-0" class="mono" style="font-size:42px;display:flex;gap:26px;align-items:center"><span class="pill" style="color:var(--green);font-size:28px;padding:6px 14px">fixed</span>carrier prefix on tracking · HERMES/JJD…</div>
+      <div id="fa-1" class="mono" style="font-size:42px;display:flex;gap:26px;align-items:center"><span class="pill" style="color:var(--green);font-size:28px;padding:6px 14px">fixed</span>mistyped IDs · INV-1O23 vs INV-1023</div>
+      <div id="fa-2" class="mono" style="font-size:42px;display:flex;gap:26px;align-items:center"><span class="pill" style="color:var(--green);font-size:28px;padding:6px 14px">fixed</span>foreign postcodes · K1A 0B1</div>
+      <div id="fa-3" class="mono" style="font-size:42px;display:flex;gap:26px;align-items:center"><span class="pill" style="color:var(--green);font-size:28px;padding:6px 14px">fixed</span>refund in words · “eighty dollars”</div>
+      <div id="fa-4" class="mono" style="font-size:42px;display:flex;gap:26px;align-items:center"><span class="pill" style="color:var(--green);font-size:28px;padding:6px 14px">fixed</span>dates read as tracking numbers</div>
+      <div id="fa-open" class="mono" style="font-size:42px;display:flex;gap:26px;align-items:center;margin-top:20px"><span class="pill" style="color:var(--amber);font-size:28px;padding:6px 14px">open</span>4 ambiguous cases · e.g. “confirmed by phone”</div>
+    </div>
+
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#fa-0", {opacity:0, y:0}, {opacity:1, y:0, duration:0.4, ease:"power3.out"}, 1.60);
+    tl.fromTo("#fa-1", {opacity:0, y:0}, {opacity:1, y:0, duration:0.4, ease:"power3.out"}, 2.90);
+    tl.fromTo("#fa-2", {opacity:0, y:0}, {opacity:1, y:0, duration:0.4, ease:"power3.out"}, 4.20);
+    tl.fromTo("#fa-3", {opacity:0, y:0}, {opacity:1, y:0, duration:0.4, ease:"power3.out"}, 5.50);
+    tl.fromTo("#fa-4", {opacity:0, y:0}, {opacity:1, y:0, duration:0.4, ease:"power3.out"}, 6.80);
+    tl.fromTo("#fa-open", {opacity:0, y:0}, {opacity:1, y:0, duration:0.4, ease:"power3.out"}, 9.00);
+
+    tl.fromTo("#root .glow", {scale:1, x:0}, {scale:1.25, x:-120, duration:12.99, ease:"none"}, 0);
+    window.__timelines["failures"] = tl;
+  </script>
+</template>

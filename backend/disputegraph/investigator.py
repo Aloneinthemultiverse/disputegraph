@@ -34,6 +34,7 @@ def log(dispute_id: str, agent: str, action: str, detail: str = ""):
 
 def _requests(findings: list[Finding], facts: list[Fact]) -> list[dict]:
     tracking = next((f.value for f in facts if f.field == "tracking"), None)
+    no_delivery = any(f.check == "delivery" and f.verdict != "MATCH" for f in findings)
     out = []
     for fd in findings:
         if fd.check == "delivery" and fd.verdict != "MATCH":
@@ -55,11 +56,32 @@ def _requests(findings: list[Finding], facts: list[Fact]) -> list[dict]:
             out.append({"check": "refund", "priority": "low",
                         "ask": "Confirm whether you issued a refund, or if this is PayPal's dispute hold.",
                         "why": fd.note})
-        elif fd.verdict in ("MISSING", "VALUE_MISMATCH") and fd.check.startswith(("ship_to", "id:")):
+        elif fd.verdict == "MISSING" and fd.check in ASK_MISSING:
+            if fd.check == "delivery_time" and no_delivery:
+                continue  # already asked for the carrier's proof of delivery
+            ask = ASK_MISSING[fd.check]
+            if fd.check == "tracking" and (no_delivery or fd.merchant):
+                ask = "Confirm the tracking number you shipped with (order sheet or dispatch email)."
+            out.append({"check": fd.check, "priority": "medium" if fd.check in ("amount", "ship_to") else "low",
+                        "ask": ask.format(t=tracking or "the parcel"), "why": fd.note})
+        elif fd.verdict == "VALUE_MISMATCH" and fd.check.startswith(("ship_to", "id:", "tracking")):
             out.append({"check": fd.check, "priority": "medium",
-                        "ask": f"Provide a document that confirms {fd.check.replace('id:', '')}.",
+                        "ask": f"Provide a document that confirms the {fd.check.replace('id:', '').replace('_', ' ')}"
+                               " or explain the difference.",
                         "why": fd.note})
     return out
+
+
+# what to upload when a check could not run because a fact is missing
+ASK_MISSING = {
+    "amount": "Upload the invoice or order sheet showing the order total.",
+    "ship_to": "Upload the carrier record or order sheet showing the delivery address.",
+    "timeline": "State the ship date (order sheet, invoice or dispatch email).",
+    "tracking": "Give the tracking number you shipped with, and the carrier's record for {t}.",
+    "delivery_time": "Upload the carrier's dated delivery scan for {t}.",
+    "id:invoice_id": "Upload the invoice showing its invoice number.",
+    "id:custom_id": "Upload the order sheet showing the order / PO reference.",
+}
 
 
 def _strength(findings: list[Finding], facts: list[Fact]) -> list[dict]:

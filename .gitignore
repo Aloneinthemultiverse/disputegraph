@@ -5,3 +5,7 @@ __pycache__/
 data/raw/
 node_modules/
 bench/stress_server.log
+graphify-out/
+video/assets/
+video/node_modules/
+video/.hyperframes/

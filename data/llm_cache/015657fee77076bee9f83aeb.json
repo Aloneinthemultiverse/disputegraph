@@ -1,0 +1,4 @@
+{
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "text": "The PayPal capture amount is 750.00, but the merchant order sheet records 760.00, creating a difference [F3].  \nThe email address on file differs from PayPal [F6].  \nThe merchant claims the order was delivered, but the carrier record shows no delivery scan recorded [F10].  \nPayPal shows a refund/reversal of 723.33, but the merchant has no record of it, indicating a dispute hold to verify [F11]."
+}
