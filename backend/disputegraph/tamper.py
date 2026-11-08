@@ -166,9 +166,7 @@ def _pixel_ai(path: Path) -> list[dict]:
     if score >= 0.9:
         return [{"signal": "pixel_ai", "severity": "high",
                  "detail": f"AI-image model: {score:.0%} likely generated or edited by AI (Sightengine)"}]
-    if score >= 0.5:
-        return [{"signal": "pixel_ai", "severity": "medium",
-                 "detail": f"AI-image model: {score:.0%} likely AI (Sightengine); check by eye"}]
+    # below 0.9 the score is shown but does not flag: real UI screenshots scored 52% and 75% in testing
     return [{"signal": "pixel_ai", "severity": "info",
              "detail": f"AI-image model: {score:.0%} likely AI (Sightengine)"}]
 
