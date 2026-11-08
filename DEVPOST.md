@@ -45,6 +45,8 @@ DisputeGraph puts two truths side by side: what PayPal recorded, and what the me
 | Blind cases, first try | 64%, then 70% |
 | Blind cases, after fixing each failure *type* as a general rule | **157 / 159** |
 
+**Manually collected test set (159 cases):** none of these came from our own generator. They were written outside the codebase, by other AI models and by 3 reviewers, then collected and scored by hand. First try: 64%, then 70%. After fixing each failure *type* as a general rule: **157 / 159**.
+
 Almost every first-try failure came from reading messy input, not from the reasoning. When the facts were extracted correctly, the checks gave the right verdict.
 
 **Limit:** real dispute data is private, so all testing used synthetic and sandbox cases.

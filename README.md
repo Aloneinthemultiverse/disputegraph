@@ -88,6 +88,8 @@ DisputeGraph puts **what PayPal recorded** next to **what the merchant can prove
 
 <sub>¹ The fallback's answers came from a Claude Haiku stand-in, because NVIDIA's free tier rate-limited us (HTTP 429). Code still checks every value it proposes. A full Nemotron re-run is pending.</sub>
 
+**Manually collected test set (159 cases):** none of these came from our own generator. They were written outside the codebase, by other AI models and by 3 reviewers, then collected and scored by hand. First try: 64%, then 70%. After fixing each failure *type* as a general rule: **157 / 159**.
+
 **Honest limit:** real dispute data is private, so all testing used synthetic and sandbox cases. Almost every first-try failure came from *reading* messy input (carrier prefixes, typos, refunds written in words), not from the reasoning.
 
 ## 🚀 Run it (about 2 minutes, no keys needed)

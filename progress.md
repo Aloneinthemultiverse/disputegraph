@@ -82,6 +82,8 @@ A flag means **human review**, never automatic rejection. AI-made evidence sends
 | Final batch, first try | 35 / 50 (70%) |
 | All 159 blind cases, after fixing each failure **type** as a general rule | **157 / 159** |
 
+**Manually collected test set (159 cases):** none of these came from our own generator. They were written outside the codebase, by other AI models and by 3 reviewers, then collected and scored by hand. First try: 64%, then 70%. After fixing each failure *type* as a general rule: **157 / 159**.
+
 After the fixes these cases are development data, not blind. The 2 still open have debatable labels: a carrier exception at an address that matches PayPal's, and a buyer's later phone confirmation.
 
 ### Other results
