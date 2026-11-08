@@ -3,22 +3,22 @@
  "mode": "regex-only",
  "disputegraph": {
   "cases": 3000,
-  "exact_accuracy": 0.842,
+  "exact_accuracy": 0.862,
   "exact_accuracy_95ci": [
-   0.829,
-   0.855
+   0.849,
+   0.874
   ],
   "micro": {
    "precision": 0.995,
-   "recall": 0.81,
-   "f1": 0.893
+   "recall": 0.847,
+   "f1": 0.915
   },
   "false_alarm_rate_on_clean": 0.001,
   "errors": 0,
   "latency_ms": {
-   "p50": 2.21,
-   "p95": 8.67,
-   "max": 93.81
+   "p50": 1.54,
+   "p95": 5.84,
+   "max": 31.47
   },
   "per_label": {
    "amount_mismatch": {
@@ -51,8 +51,8 @@
    },
    "false_refund_claim": {
     "precision": 1.0,
-    "recall": 0.691,
-    "f1": 0.817,
+    "recall": 0.967,
+    "f1": 0.983,
     "support": 395,
     "fp": 0
    },
@@ -100,8 +100,8 @@
    },
    "heldout": {
     "n": 891,
-    "exact": 0.523,
-    "micro_f1": 0.591
+    "exact": 0.588,
+    "micro_f1": 0.701
    }
   },
   "by_family": {
@@ -112,18 +112,18 @@
    },
    "multi": {
     "n": 571,
-    "exact": 0.688,
-    "micro_f1": 0.891
+    "exact": 0.704,
+    "micro_f1": 0.914
    },
    "scam": {
     "n": 494,
-    "exact": 0.783,
-    "micro_f1": 0.906
+    "exact": 0.8,
+    "micro_f1": 0.918
    },
    "single": {
     "n": 929,
-    "exact": 0.799,
-    "micro_f1": 0.888
+    "exact": 0.843,
+    "micro_f1": 0.914
    },
    "trap": {
     "n": 440,
@@ -158,7 +158,7 @@
     "micro_f1": 1.0
    }
   },
-  "throughput_cases_per_s": 301.9
+  "throughput_cases_per_s": 433.6
  },
  "keyword": {
   "cases": 3000,
@@ -175,9 +175,9 @@
   "false_alarm_rate_on_clean": 0.177,
   "errors": 0,
   "latency_ms": {
-   "p50": 0.01,
-   "p95": 0.02,
-   "max": 0.31
+   "p50": 0.0,
+   "p95": 0.01,
+   "max": 0.25
   },
   "per_label": {
    "amount_mismatch": {

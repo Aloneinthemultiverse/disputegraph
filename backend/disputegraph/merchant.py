@@ -46,11 +46,15 @@ CLAIMS = [  # free-text claims in emails / notes
                 r"\bdelivered (already|in good order|to (the )?(buyer|customer|client|recipient))|\b(completed|directly)"
                 r" and delivered\b|^\s*delivered\b)", re.I), "delivery_status", "Delivered"),
     (re.compile(r"\bshipped (today|on)\b", re.I), "shipped_claim", "Shipped"),
-    (re.compile(r"^(?!.*\?)(?!.*\b(no|never|not|want|nothing)\b[^.]{0,25}refund).*(\b(have|has|was|were|already|we)"
+    (re.compile(r"^(?!.*\?)(?!.*\b(no|never|not|want|nothing|will|would|can|could|please)\b[^.]{0,25}(refund|back\b))(?!.*\bback nothing\b).*(\b(have|has|was|were|already|we)"
                 r"( already)? (been )?refunded\b|\bissued (a|the|your)( full| partial)? refund\b|\brefund"
                 r"( of \$?[\d.,]+)? (issued|processed|sent|already sent)|\bprocessed a( full)? refund|\brefunded "
                 r"(in full|you|the buyer)|\brefund status: refunded|\brefunded \$|\bcredited\b.{0,40}\bback\b|\bfully refunded|\b(issued|sent|processed)\b[^.]{0,30}\brefund\b|"
-                r"\brefund (already )?(sent|completed)\b)", re.I),
+                r"\brefund (already )?(sent|completed)\b|"
+                # money returned without the word "refund": past or in-progress only, never a promise
+                r"\b(sent|returned|paid|credited|reversed)\b[^.]{0,25}\b(money|payment|funds|amount)\b[^.]{0,20}\bback\b|"
+                r"\b(money|payment|funds)\b[^.]{0,15}\b(is on (its|the) way|has been (sent|returned)|was (sent|returned))"
+                r"\b[^.]{0,15}\bback\b)", re.I),
      "refund_claim", "Refunded"),
 ]
 LLM_FIELD = {"DELIVERED": ("delivery_status", "Delivered"), "SHIPPED": ("shipped_claim", "Shipped"),

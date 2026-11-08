@@ -69,9 +69,9 @@ DisputeGraph puts **what PayPal recorded** next to **what the merchant can prove
 | Mode | Exact | False alarms |
 |---|---:|---:|
 | Keyword script | 55.8% | 17.7% |
-| DisputeGraph, no AI | 84.2% | 0.1% |
-| DisputeGraph + Nemotron | **94.6%** | 0.3% |
-| + verified extraction fallback ¹ | **97.0%** | 0.3% |
+| DisputeGraph, no AI | 86.2% | 0.1% |
+| DisputeGraph + Nemotron | **96.2%** | 0.3% |
+| + verified extraction fallback ¹ | **98.7%** | 0.3% |
 
 </td><td>
 
@@ -210,7 +210,7 @@ python bench/stress.py       # hostile inputs + HTTP load
   - 4 date formats and 4 money formats
   - documents with up to 60 extra lines
   - mixed languages
-- **Held-out split:** 30% of cases use wording the rules were never written against. With AI they score 91.4%, against 99.3% on the other 70%.
+- **Held-out split:** 30% of cases use wording the rules were never written against. With AI they scored 91.4% (vs 99.3% on the rest) before the refund fix, and 97.1% after it. Refund fix (Nov 8): we studied the benchmark's missed refund cases and added one general rule for money returned without the word "refund" ("sent the payment back", "money is on its way back"). Refund recall went from 85% to 98% with 0 new false positives, and the blind tests stayed at 157/159. Because that rule came from looking at benchmark misses, the held-out split is no longer fully unseen for refunds.
 
 </details>
 

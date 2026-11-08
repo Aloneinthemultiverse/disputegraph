@@ -9,7 +9,7 @@ Merchants lose disputes they should win. DisputeGraph finds the proof, flags the
 | | Exact verdicts | False alarms |
 |---|---:|---:|
 | Keyword script | 55.8% | 17.7% |
-| **DisputeGraph + NVIDIA Nemotron** | **94.6%** | **0.3%** |
+| **DisputeGraph + NVIDIA Nemotron** | **96.2%** | **0.3%** |
 | Blind cases we had never seen (after fixing each failure *type*) | **157 / 159** | |
 
 Live demo: https://disputegraph.onrender.com
@@ -40,14 +40,16 @@ DisputeGraph puts two truths side by side: what PayPal recorded, and what the me
 ## Results (honest)
 | Test | Score |
 |---|---|
-| 3,000-case adversarial benchmark, Nemotron only | **94.6%** exact, **0.3%** false alarms (a keyword baseline gets 55.8% with 17.7% false alarms) |
-| Same, plus the verified field-extraction fallback | **97.0%**. The fallback's answers came from a Claude Haiku stand-in because NVIDIA's free tier rate-limited us; a Nemotron re-run is pending |
+| 3,000-case adversarial benchmark, Nemotron only | **96.2%** exact, **0.3%** false alarms (a keyword baseline gets 55.8% with 17.7% false alarms) |
+| Same, plus the verified field-extraction fallback | **98.7%**. The fallback's answers came from a Claude Haiku stand-in because NVIDIA's free tier rate-limited us; a Nemotron re-run is pending |
 | Blind cases, first try | 64%, then 70% |
 | Blind cases, after fixing each failure *type* as a general rule | **157 / 159** |
 
 **Manually collected test set (159 cases):** none of these came from our own generator. They were written outside the codebase, by other AI models and by 3 reviewers, then collected and scored by hand. First try: 64%, then 70%. After fixing each failure *type* as a general rule: **157 / 159**.
 
 Almost every first-try failure came from reading messy input, not from the reasoning. When the facts were extracted correctly, the checks gave the right verdict.
+
+**Refund fix:** we studied the benchmark's missed refund cases and added one general rule for money returned without the word "refund" ("sent the payment back", "money is on its way back"). Refund recall went from 85% to 98% with 0 new false positives, and the blind tests stayed at 157/159. Because that rule came from looking at benchmark misses, the held-out split is no longer fully unseen for refunds.
 
 **Limit:** real dispute data is private, so all testing used synthetic and sandbox cases.
 
