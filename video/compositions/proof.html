@@ -1,0 +1,48 @@
+<template>
+  <style>
+#root{position:absolute;inset:0;background:var(--ground);color:var(--ink);font-family:'Inter';overflow:hidden}
+.mono{font-family:'JetBrains Mono'}
+.serif{font-family:'Playfair Display'}
+.kicker{font-family:'JetBrains Mono';font-size:28px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.grad{background:linear-gradient(90deg,var(--amber),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pill{display:inline-block;font-family:'JetBrains Mono';font-size:28px;padding:10px 22px;border-radius:999px;border:2px solid currentColor}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:22px}
+.glow{position:absolute;inset:0;background:radial-gradient(1200px 600px at 70% -10%,rgba(245,197,107,.14),transparent 60%),radial-gradient(900px 500px at 0% 110%,rgba(240,106,166,.10),transparent 60%)}
+.cap{position:absolute;left:0;right:0;margin:0 auto;width:fit-content;bottom:34px;max-width:1500px;text-align:center;font-family:'Inter';font-size:34px;line-height:1.3;color:#fff;background:rgba(0,0,0,.72);padding:12px 26px;border-radius:12px;opacity:0;z-index:50}</style>
+  <div id="root" data-composition-id="proof" data-width="1920" data-height="1080">
+    <div class="glow" data-layout-allow-overflow data-layout-ignore></div>
+
+    <div class="kicker" style="position:absolute;left:150px;top:170px">Tested, not just demoed</div>
+    <div id="pf-q" class="serif" style="position:absolute;left:150px;top:240px;font-size:64px;font-style:italic">Most AI demos show it works <span class="grad">once.</span></div>
+    <div style="position:absolute;left:150px;right:150px;top:420px;display:flex;gap:60px">
+      <div id="pf-a" style="flex:1"><div class="serif" style="font-size:190px;line-height:1;color:var(--ink)">3,000</div><div class="mono" style="font-size:28px;color:var(--muted);margin-top:18px">test cases, fixed seed</div></div>
+      <div id="pf-b" style="flex:1"><div class="serif" style="font-size:190px;line-height:1;color:var(--green)">94.6%</div><div class="mono" style="font-size:28px;color:var(--muted);margin-top:18px">exact verdicts · Nemotron</div></div>
+      <div id="pf-c" style="flex:1"><div class="serif" style="font-size:190px;line-height:1;color:var(--amber)">0.3%</div><div class="mono" style="font-size:28px;color:var(--muted);margin-top:18px">false alarms on clean cases</div></div>
+    </div>
+    <div id="pf-d" class="mono" style="position:absolute;left:150px;top:850px;font-size:40px;color:var(--muted)">keyword script → <span style="color:var(--red)">55.8%</span> exact, 17.7% false alarms</div>
+
+    <div id="cap-proof-0" class="cap">Most AI demos show it works once.</div>
+    <div id="cap-proof-1" class="cap">We tested ours on three thousand cases.</div>
+    <div id="cap-proof-2" class="cap">Ninety-four point six percent exact, with zero point three percent false alarms.</div>
+    <div id="cap-proof-3" class="cap">A keyword script gets fifty-six.</div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#pf-q", {opacity:0, y:20}, {opacity:1, y:0, duration:0.5, ease:"power3.out"}, 0.20);
+    tl.fromTo("#pf-a", {opacity:0, y:30}, {opacity:1, y:0, duration:0.5, ease:"power3.out"}, 2.60);
+    tl.fromTo("#pf-b", {opacity:0, y:30}, {opacity:1, y:0, duration:0.5, ease:"power3.out"}, 5.00);
+    tl.fromTo("#pf-c", {opacity:0, y:30}, {opacity:1, y:0, duration:0.5, ease:"power3.out"}, 8.00);
+    tl.fromTo("#pf-d", {opacity:0, y:20}, {opacity:1, y:0, duration:0.5, ease:"power3.out"}, 10.80);
+    tl.fromTo("#cap-proof-0", {opacity:0}, {opacity:1, duration:0.15}, 0.25);
+    tl.to("#cap-proof-0", {opacity:0, duration:0.15}, 2.55);
+    tl.fromTo("#cap-proof-1", {opacity:0}, {opacity:1, duration:0.15}, 2.67);
+    tl.to("#cap-proof-1", {opacity:0, duration:0.15}, 5.40);
+    tl.fromTo("#cap-proof-2", {opacity:0}, {opacity:1, duration:0.15}, 5.52);
+    tl.to("#cap-proof-2", {opacity:0, duration:0.15}, 11.27);
+    tl.fromTo("#cap-proof-3", {opacity:0}, {opacity:1, duration:0.15}, 11.39);
+    tl.to("#cap-proof-3", {opacity:0, duration:0.15}, 13.61);
+
+    tl.fromTo("#root .glow", {scale:1, x:0}, {scale:1.25, x:-120, duration:14.13, ease:"none"}, 0);
+    window.__timelines["proof"] = tl;
+  </script>
+</template>

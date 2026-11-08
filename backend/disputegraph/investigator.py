@@ -16,6 +16,7 @@ from .graph import PayPalGraph
 from .llm import summarize
 from .merchant import MERCHANT, extract
 from .model import Fact
+from . import tamper
 from .reconcile import Finding, reconcile
 
 MAX_ROUNDS = 3
@@ -114,6 +115,14 @@ def investigate(dispute_id: str) -> dict:
     pg.add_trackers([f.value for f in m_facts if f.field == "tracking"])  # PayPal Shipment Tracking API
     findings = reconcile(pg.facts, m_facts)
     reqs = _requests(findings, pg.facts + m_facts)
+    integrity = tamper.scan_folder(MERCHANT / inv)  # forged / AI-made evidence signals
+    flagged = [r for r in integrity if r["verdict"] != "clean"]
+    reqs = [{"check": "evidence_integrity", "priority": "high",
+             "ask": f"Human review: check {r['file']} before sending it to PayPal.",
+             "why": "; ".join(sig["detail"] for sig in r["signals"] if sig["severity"] != "info")}
+            for r in flagged] + reqs
+    if flagged:
+        log(dispute_id, "Evidence Integrity", "scan", f"{len(flagged)} of {len(integrity)} file(s) need review")
     log(dispute_id, "Reconciliation Investigator", "reconcile",
         f"{len(findings)} findings, {len(reqs)} evidence requests")
 
@@ -122,6 +131,8 @@ def investigate(dispute_id: str) -> dict:
     blocking = [f for f in findings if f.check == "delivery" and f.verdict != "MATCH"]
     status = ("READY_FOR_REVIEW" if not blocking else
               "ESCALATE_TO_HUMAN" if rounds >= MAX_ROUNDS else "NEEDS_EVIDENCE")
+    if any(r["verdict"] == "likely_ai" for r in integrity):
+        status = "ESCALATE_TO_HUMAN"  # possibly AI-made proof: a person decides
     get = lambda field: next((f.value for f in pg.facts if f.field == field), None)
     fds = [f.model_dump() for f in findings]
     summary = summarize(fds)
@@ -139,7 +150,7 @@ def investigate(dispute_id: str) -> dict:
         "carrier": next((f.value for f in m_facts if f.field == "carrier"), None),
         "status": status, "round": rounds, "max_rounds": MAX_ROUNDS,
         "findings": fds,
-        "requests": reqs, "strength": strength,
+        "requests": reqs, "strength": strength, "integrity": integrity,
         "graph": [{"from": u, "to": v, "rel": d["rel"]} for u, v, d in pg.g.edges(data=True)],
         "audit": _AUDIT.get(dispute_id, []),
     }

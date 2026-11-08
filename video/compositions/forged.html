@@ -1,0 +1,44 @@
+<template>
+  <style>
+#root{position:absolute;inset:0;background:var(--ground);color:var(--ink);font-family:'Inter';overflow:hidden}
+.mono{font-family:'JetBrains Mono'}
+.serif{font-family:'Playfair Display'}
+.kicker{font-family:'JetBrains Mono';font-size:28px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.grad{background:linear-gradient(90deg,var(--amber),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pill{display:inline-block;font-family:'JetBrains Mono';font-size:28px;padding:10px 22px;border-radius:999px;border:2px solid currentColor}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:22px}
+.glow{position:absolute;inset:0;background:radial-gradient(1200px 600px at 70% -10%,rgba(245,197,107,.14),transparent 60%),radial-gradient(900px 500px at 0% 110%,rgba(240,106,166,.10),transparent 60%)}
+.cap{position:absolute;left:0;right:0;margin:0 auto;width:fit-content;bottom:34px;max-width:1500px;text-align:center;font-family:'Inter';font-size:34px;line-height:1.3;color:#fff;background:rgba(0,0,0,.72);padding:12px 26px;border-radius:12px;opacity:0;z-index:50}</style>
+  <div id="root" data-composition-id="forged" data-width="1920" data-height="1080">
+    <div class="glow" data-layout-allow-overflow data-layout-ignore></div>
+
+    <div class="kicker" style="position:absolute;left:120px;top:110px">Forged-evidence check</div>
+    <div id="fg-img" style="position:absolute;left:120px;top:190px;width:800px;height:600px">
+      <img src="assets/shots/forged.jpg" style="width:800px;height:600px;border-radius:14px;box-shadow:0 30px 120px rgba(0,0,0,.6)">
+      <div id="fg-box" style="position:absolute;left:30px;top:228px;width:400px;height:66px;border:5px solid var(--red);border-radius:10px;box-shadow:0 0 40px var(--red)"></div>
+    </div>
+    <div style="position:absolute;left:1000px;top:230px;width:800px;display:flex;flex-direction:column;gap:30px">
+      <div id="fg-p" class="pill" style="color:var(--red);font-size:34px;align-self:flex-start">needs human review</div>
+      <div id="fg-1" class="mono" style="font-size:32px;line-height:1.4">a region is much cleaner than<br>the rest of the photo</div>
+      <div id="fg-2" class="mono" style="font-size:28px;color:var(--muted);line-height:1.5">also checks: C2PA Content Credentials ·<br>AI-tool metadata · PDF edit history</div>
+    </div>
+
+    <div id="cap-forged-0" class="cap">And if a merchant uploads an AI-edited delivery photo,</div>
+    <div id="cap-forged-1" class="cap">it's flagged for a human before anything reaches PayPal.</div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#fg-img", {opacity:0, y:30}, {opacity:1, y:0, duration:0.5, ease:"power3.out"}, 0.20);
+    tl.fromTo("#fg-box", {opacity:0, y:0}, {opacity:1, y:0, duration:0.35, ease:"power3.out"}, 2.40);
+    tl.fromTo("#fg-p", {opacity:0, y:10}, {opacity:1, y:0, duration:0.5, ease:"power3.out"}, 3.00);
+    tl.fromTo("#fg-1", {opacity:0, y:10}, {opacity:1, y:0, duration:0.5, ease:"power3.out"}, 3.60);
+    tl.fromTo("#fg-2", {opacity:0, y:10}, {opacity:1, y:0, duration:0.5, ease:"power3.out"}, 5.00);
+    tl.fromTo("#cap-forged-0", {opacity:0}, {opacity:1, duration:0.15}, 0.25);
+    tl.to("#cap-forged-0", {opacity:0, duration:0.15}, 3.67);
+    tl.fromTo("#cap-forged-1", {opacity:0}, {opacity:1, duration:0.15}, 3.79);
+    tl.to("#cap-forged-1", {opacity:0, duration:0.15}, 7.34);
+
+    tl.fromTo("#root .glow", {scale:1, x:0}, {scale:1.25, x:-120, duration:7.86, ease:"none"}, 0);
+    window.__timelines["forged"] = tl;
+  </script>
+</template>

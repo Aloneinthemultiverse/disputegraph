@@ -7,3 +7,6 @@ uvicorn
 mcp
 numpy
 turbovec
+Pillow>=10
+pypdf>=4
+c2pa-python>=0.38

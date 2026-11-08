@@ -5,9 +5,9 @@ Run: python build.py   then   npx hyperframes@0.9.20 check / render
 import json, os
 
 T = json.load(open("assets/vo/timing.json"))
-ORDER = ["market", "hook", "idea", "design", "ai", "case", "missing", "twist", "sweep",
-         "human", "results", "failures", "limits", "end"]
-LEAD, TAIL = 0.35, 0.65          # silence before / after each line
+ORDER = ["market", "proof", "hook", "idea", "design", "ai", "case", "missing", "twist", "sweep",
+         "forged", "human", "results", "failures", "limits", "end"]
+LEAD, TAIL = 0.25, 0.4          # silence before / after each line
 os.makedirs("compositions", exist_ok=True)
 
 BASE_CSS = """
@@ -264,6 +264,33 @@ S["end"] = ("""
       <div id="en-c" class="mono" style="font-size:44px;margin-top:40px;color:var(--amber)">disputegraph.onrender.com</div>
     </div>
 """, "", fade("#en-a", 0.2, 20, 0.6) + fade("#en-b", 1.1, 20, 0.6) + fade("#en-c", 3.3, 20, 0.6))
+
+
+# proof: results up front ------------------------------------------------------
+S["proof"] = (f"""
+    <div class="kicker" style="position:absolute;left:150px;top:170px">Tested, not just demoed</div>
+    <div id="pf-q" class="serif" style="position:absolute;left:150px;top:240px;font-size:64px;font-style:italic">Most AI demos show it works <span class="grad">once.</span></div>
+    <div style="position:absolute;left:150px;right:150px;top:420px;display:flex;gap:60px">
+      {stat("pf-a", "3,000", "test cases, fixed seed", "var(--ink)")}
+      {stat("pf-b", "94.6%", "exact verdicts · Nemotron", "var(--green)")}
+      {stat("pf-c", "0.3%", "false alarms on clean cases", "var(--amber)")}
+    </div>
+    <div id="pf-d" class="mono" style="position:absolute;left:150px;top:850px;font-size:40px;color:var(--muted)">keyword script → <span style="color:var(--red)">55.8%</span> exact, 17.7% false alarms</div>
+""", "", fade("#pf-q", 0.2, 20) + fade("#pf-a", 2.6, 30) + fade("#pf-b", 5.0, 30) + fade("#pf-c", 8.0, 30) + fade("#pf-d", 10.8, 20))
+
+# forged evidence ---------------------------------------------------------------
+S["forged"] = ("""
+    <div class="kicker" style="position:absolute;left:120px;top:110px">Forged-evidence check</div>
+    <div id="fg-img" style="position:absolute;left:120px;top:190px;width:800px;height:600px">
+      <img src="assets/shots/forged.jpg" style="width:800px;height:600px;border-radius:14px;box-shadow:0 30px 120px rgba(0,0,0,.6)">
+      <div id="fg-box" style="position:absolute;left:30px;top:228px;width:400px;height:66px;border:5px solid var(--red);border-radius:10px;box-shadow:0 0 40px var(--red)"></div>
+    </div>
+    <div style="position:absolute;left:1000px;top:230px;width:800px;display:flex;flex-direction:column;gap:30px">
+      <div id="fg-p" class="pill" style="color:var(--red);font-size:34px;align-self:flex-start">needs human review</div>
+      <div id="fg-1" class="mono" style="font-size:32px;line-height:1.4">a region is much cleaner than<br>the rest of the photo</div>
+      <div id="fg-2" class="mono" style="font-size:28px;color:var(--muted);line-height:1.5">also checks: C2PA Content Credentials ·<br>AI-tool metadata · PDF edit history</div>
+    </div>
+""", "", fade("#fg-img", 0.2, 30) + fade("#fg-box", 2.4, 0, 0.35) + fade("#fg-p", 3.0, 10) + fade("#fg-1", 3.6, 10) + fade("#fg-2", 5.0, 10))
 
 # assemble ---------------------------------------------------------------------
 hosts, audios, t = [], [], 0.0

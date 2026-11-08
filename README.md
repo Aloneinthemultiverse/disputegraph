@@ -46,6 +46,7 @@ DisputeGraph puts **what PayPal recorded** next to **what the merchant can prove
 | ⚖️ | **6 checks, in code** | Amount, IDs, address, timeline, tracking and delivery. Each gives one of six verdicts: `MATCH` `VALUE_MISMATCH` `CONTRADICTION` `TIME_MISMATCH` `UNSUPPORTED_CLAIM` `MISSING`. |
 | 📦 | **PayPal tracking check** | Is the merchant's tracking number actually on the PayPal transaction? Seller Protection depends on it. |
 | 🧭 | **Says what's missing** | Gaps become a to-do list, for example "no carrier record for 1Z…, so delivery can't be verified". |
+| 🕵️ | **Forged-evidence check** | Flags AI-made or edited proof: **C2PA Content Credentials**, AI-tool and editor metadata, PDF edit history, and photo noise inconsistencies (Error Level Analysis). It sends the file to a human and never rejects it automatically. |
 | 🔎 | **Sweep across cases** | Catches the same tracking number offered on two orders, and refunds the merchant claims that PayPal never recorded. |
 | ✋ | **Human approval** | Nothing is sent to PayPal until a person reviews it and signs off. |
 
@@ -263,6 +264,8 @@ Earlier, 100 cases were written independently by ChatGPT, DeepSeek, Qwen and Kim
 - HyperFrames for the demo video
 
 ## ⚠️ Limits
+
+- The forged-evidence check finds **signals, not proof**. Google SynthID has no public image API, and a screenshot of a fake carries no metadata. It has been tested on generated test files, not on real fraud cases.
 
 - Tested on synthetic and sandbox data only, because real dispute data is private.
 - Only **Item Not Received** disputes are supported.
