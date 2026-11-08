@@ -17,7 +17,7 @@ import re
 from collections import Counter
 from pathlib import Path
 
-from . import freeform
+from . import freeform, intake
 from .llm import classify_claim, extract_fields, map_label
 from .model import Fact, Source
 
@@ -64,11 +64,21 @@ AMOUNT = re.compile(r"([\d,]+\.\d{2})")
 
 
 def load_pages(invoice_id: str) -> list[dict]:
+    """Text docs as is; PDFs and images through OCR; non-English pages through a checked translation."""
     pages = []
-    for f in sorted((MERCHANT / invoice_id).glob("*.md")):
-        parts = re.split(r"^--- page (\d+) ---$", f.read_text(encoding="utf-8"), flags=re.M)
-        for num, text in zip(parts[1::2], parts[2::2]):
-            pages.append({"doc": f.stem, "page": int(num), "text": text.strip()})
+    for f in sorted((MERCHANT / invoice_id).glob("*")):
+        text, how = intake.read_file(f)
+        if text is None:
+            if how == "unread" and f.suffix.lower() in intake.IMAGE | {".pdf"}:
+                pages.append({"doc": f.stem, "page": 1, "text": "", "intake": "unread"})
+            continue
+        if "--- page" not in text:
+            text = "--- page 1 ---\n" + text
+        parts = re.split(r"^--- page (\d+) ---$", text, flags=re.M)
+        for num, body in zip(parts[1::2], parts[2::2]):
+            body, tr = intake.translate(body.strip())
+            pages.append({"doc": f.stem, "page": int(num), "text": body,
+                          "intake": how if tr == "original" else f"{how}+translated"})
     return pages
 
 
@@ -104,14 +114,31 @@ def _norm(field: str, value: str):
     return value
 
 
-ONES = "one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty"
-TENS = "thirty|forty|fifty|sixty|seventy|eighty|ninety|twenty"
-_NUM = {w: i for i, w in enumerate("zero one two three four five six seven eight nine ten eleven twelve".split())}
-_NUM.update(fifteen=15, twenty=20, thirty=30, forty=40, fifty=50, sixty=60, seventy=70, eighty=80, ninety=90)
+_NUM = {w: i for i, w in enumerate(
+    "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen "
+    "sixteen seventeen eighteen nineteen".split())}
+_NUM.update(twenty=20, thirty=30, forty=40, fifty=50, sixty=60, seventy=70, eighty=80, ninety=90)
+_W = "|".join(sorted(_NUM, key=len, reverse=True)) + "|hundred|thousand|a|and"
+# "one hundred twenty-nine dollars (and fifty cents)"
+_RUN = rf"(?:\b(?:{_W})\b[ -]+)*\b(?:{_W})\b"
+WORD_MONEY = re.compile(rf"({_RUN})\s+dollars?(?:\s+and\s+({_RUN})\s+cents?)?", re.I)
 
 
 def _words(s: str) -> float:
-    return float(sum(_NUM[w] for w in re.split(r"[ -]", s.lower())))
+    """'one hundred twenty-nine' -> 129; 'two thousand and five' -> 2005."""
+    total = cur = 0
+    for w in re.split(r"[ -]+", s.lower().strip()):
+        if w in ("and", ""):
+            continue
+        if w == "a":
+            cur = cur or 1
+        elif w == "hundred":
+            cur = (cur or 1) * 100
+        elif w == "thousand":
+            total += (cur or 1) * 1000; cur = 0
+        else:
+            cur += _NUM[w]
+    return float(total + cur)
 
 
 def _refund_value(line: str) -> str:
@@ -121,8 +148,8 @@ def _refund_value(line: str) -> str:
             for m in re.finditer(r"\$\s?([\d,]+(?:\.\d{1,2})?)|\b([\d,]+\.\d{2})\b", line)]
     if nums:  # a stated amount (the one nearest "refund") is the claim; compared with PayPal's refunds
         return f"Refunded {min(nums)[1].replace(',', '')}"
-    if w := re.search(rf"\b((?:{TENS})(?:[ -](?:{ONES}))?|{ONES})\s+dollars\b", line, re.I):
-        return f"Refunded {_words(w[1]):.2f}"
+    if (w := WORD_MONEY.search(line)) and _words(w[1]) > 0:
+        return f"Refunded {_words(w[1]) + (_words(w[2]) / 100 if w[2] else 0):.2f}"
     if re.search(r"\b(fully|in full|full refund|entire (order|amount)|100%|complete refund)\b", line, re.I):
         return "Refunded full"
     return "Refunded"

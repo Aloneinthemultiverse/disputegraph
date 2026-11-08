@@ -128,6 +128,9 @@ def _line(f) -> tuple:
 def check_delivery(pp, mc) -> list[Finding]:
     claims = [f for f in mc if f.field == "delivery_status" and f.entity in CLAIM_DOCS
               and "deliver" in str(f.value).lower()]
+    # the seller's own invoice saying "Delivered: left at door" is a claim, not a carrier record
+    claims += [f for f in mc if f.entity == "merchant:invoice" and f.field in ("delivery_status", "delivery_scan")
+               and SELF_DELIVERED.search(str(f.value))]
     records = [f for f in mc if f.entity in RECORD_DOCS
                and f.field in ("delivery_status", "delivery_scan", "scan")]
     tracking = _pick(mc, "tracking")
@@ -171,7 +174,8 @@ def check_timeline(pp, mc) -> list[Finding]:
 
 def check_ship_to(pp, mc) -> list[Finding]:
     p = _pick(pp, "ship_to")
-    m = _pick(mc, "ship_to")
+    # an email address is a contact, not a shipping address
+    m = [f for f in _pick(mc, "ship_to") if not EMAIL.search(str(f.value))]
     if not p or not m:
         return [Finding(check="ship_to", verdict="MISSING", paypal=p, merchant=m,
                         note=_absent("shipping address", p, m, "carrier record or order sheet"))]
@@ -218,6 +222,18 @@ def check_refunds(pp, mc) -> list[Finding]:
                              "; merchant has no record of it (likely dispute hold, verify)")))]
 
 
+SELF_DELIVERED = re.compile(r"\bdeliver|left at|doorstep|handed (to|over)|dropped off", re.I)
+EMAIL = re.compile(r"[\w.+-]+@[\w-]+\.[\w.]+")
+# OCR confuses these; applied to both sides only when the exact numbers differ
+OCR_FIX = str.maketrans({"O": "0", "Q": "0", "D": "0", "I": "1", "L": "1", "S": "5", "B": "8"})
+
+
+def _tdigits(t: str) -> str:
+    """Fold OCR look-alikes in the numeric tail, keeping a carrier's letter prefix (1Z, JJD, PL)."""
+    m = re.match(r"(\d?[A-Z]{1,3})?(.*)", t)
+    return (m[1] or "") + m[2].translate(OCR_FIX)
+
+
 def _tnorm(v) -> str:
     t = re.sub(r"^[A-Za-z ]+/", "", str(v).strip())  # "HERMES/JJD.." -> "JJD.."
     t = re.sub(r"[^A-Za-z0-9]", "", t).upper()
@@ -241,7 +257,8 @@ def check_tracking(pp, mc) -> list[Finding]:
                         note=f"carrier record is for {records[0].value}, but no order sheet, email or note "
                              "says which tracking number was shipped")]
     ids = {_tnorm(f.value) for f in claimed}
-    bad = [r for r in records if _tnorm(r.value) not in ids]
+    folded = {_tdigits(i) for i in ids}
+    bad = [r for r in records if _tnorm(r.value) not in ids and _tdigits(_tnorm(r.value)) not in folded]
     return [Finding(check="tracking", verdict="VALUE_MISMATCH" if bad else "MATCH",
                     merchant=(bad + claimed[:1]) if bad else records[:1] + claimed[:1],
                     note=(f"carrier record is for tracking {bad[0].value}, but the merchant shipped "

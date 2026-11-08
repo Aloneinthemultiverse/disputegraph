@@ -237,11 +237,18 @@ We wrote new cases in formats the rules had never seen, scored them first try, t
 |---|---|---|
 | Blind batch 1 | 48 / 75 (64%) | fixed |
 | Blind batch 2 | 35 / 50 (70%) | fixed |
-| All blind cases | | **155 / 159** |
+| All blind cases | | **157 / 159** |
 
-What failed was almost always **reading the input**, not the reasoning: carrier prefixes on tracking numbers, mistyped IDs, foreign postcodes, refunds written in words, dates mistaken for tracking numbers. When the facts were extracted correctly, the checks gave the right verdict. Four ambiguous cases are still open.
+What failed was almost always **reading the input**, not the reasoning: carrier prefixes on tracking numbers, mistyped IDs, foreign postcodes, refunds written in words, dates mistaken for tracking numbers. When the facts were extracted correctly, the checks gave the right verdict. The 2 still open have debatable labels: a carrier exception at a correct address, and a buyer's later phone confirmation.
 
-**Next:** OCR and translation for scanned and foreign-language documents, and real (consented) merchant data to test on.
+**Input hardening added after the blind tests:**
+- **OCR intake:** scanned images and PDFs in a case folder are read (`rapidocr-onnxruntime`, optional: `pip install rapidocr_onnxruntime`). Without an OCR engine, a scanned file is reported as unread, never silently skipped.
+- **Checked translation:** non-English pages are translated by the LLM, and a translated line is kept only if every number, ID and date in it matches the original exactly.
+- **OCR-tolerant tracking matching:** look-alikes (O/0, I/l/1, S/5, B/8) are folded on both sides before two tracking numbers are called different.
+- **Amounts in words:** "one hundred twenty-nine dollars and fifty cents" → 129.50.
+- An email address is no longer mistaken for a shipping address.
+
+**Next:** test on real (consented, anonymised) merchant disputes.
 
 ## Limits
 

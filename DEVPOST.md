@@ -20,14 +20,16 @@ Chargebacks cost merchants about $34B a year, and that figure is forecast to rea
 
 ## Results
 - 97.0% on a 3,000-case adversarial benchmark, with 0.3% false alarms.
-- Blind cases we had never seen: 64%, then 70% on the first try. After fixing each failure type as a general rule: 155 of 159.
+- Blind cases we had never seen: 64%, then 70% on the first try. After fixing each failure type as a general rule: 157 of 159.
 - Almost every failure came from reading messy input, such as carrier prefixes, typos, foreign postcodes and refunds written in words. When the facts were extracted correctly, the checks gave the right verdict.
+
+After the blind tests we added OCR for scanned images and PDFs, translation that is checked against the original numbers, and OCR-tolerant tracking-number matching.
 
 ## Challenges
 Real dispute data is private, so we tested on synthetic and sandbox data only. Real-world accuracy is not yet measured.
 
 ## What's next
-- OCR and translation for scanned and foreign-language documents.
+- Wider OCR testing on real scanned receipts.
 - Testing on real merchant data, with consent.
 - More dispute types beyond Item Not Received.
 
