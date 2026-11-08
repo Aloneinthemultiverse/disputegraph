@@ -28,7 +28,8 @@ DisputeGraph puts two truths side by side: what PayPal recorded, and what the me
 ## Results (honest)
 | Test | Score |
 |---|---|
-| 3,000-case adversarial benchmark | **97.0%** exact, **0.3%** false alarms (a keyword baseline gets 55.8% with 17.7% false alarms) |
+| 3,000-case adversarial benchmark, Nemotron only | **94.6%** exact, **0.3%** false alarms (a keyword baseline gets 55.8% with 17.7% false alarms) |
+| Same, plus the verified field-extraction fallback | **97.0%**. The fallback's answers came from a Claude Haiku stand-in because NVIDIA's free tier rate-limited us; a Nemotron re-run is pending |
 | Blind cases, first try | 64%, then 70% |
 | Blind cases, after fixing each failure *type* as a general rule | **157 / 159** |
 

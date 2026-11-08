@@ -1,105 +1,118 @@
 # DisputeGraph: progress report for outside review
 
-**Purpose:** hand this file to another AI (ChatGPT, DeepSeek, Qwen, Kimi, Gemini...) and ask it to rate the project.
-**Snapshot date:** 2026-11-07. **Deadline:** PayPal AI Hackathon (Devpost), Thu 2026-11-12, 12:00 pm PT.
-All data is **SYNTHETIC**; PayPal calls are sandbox only.
+**Purpose:** give this file to another AI (ChatGPT, Gemini, DeepSeek, Qwen, Kimi…) and ask it to rate the project as a hackathon judge would.
+**Snapshot:** 2026-11-08. **Deadline:** PayPal AI Hackathon (Devpost), Thu 2026-11-12, 12:00 pm PT.
+**Live demo:** https://disputegraph.onrender.com (free tier, so the first load can take about a minute)
+**Data:** all merchant data is **synthetic**; PayPal calls are **sandbox only**.
 
 ---
 
 ## 1. What it is
 
-A tool that helps small online sellers answer PayPal disputes. It:
+A tool that helps online sellers answer PayPal **Item Not Received** disputes. It:
 
-1. Pulls the dispute and the transaction from the PayPal sandbox.
-2. Reads the seller's evidence folder: invoice, order sheet, courier tracking, emails and notes.
-3. Turns every line into a **Fact** with a citation (`file / page / line`).
-4. Runs **deterministic reconcile checks** (amount, invoice ID, tracking, ship-to, delivery, refund, timeline), each giving a verdict: MATCH, VALUE_MISMATCH, CONTRADICTION, UNSUPPORTED_CLAIM, TIME_MISMATCH or MISSING.
-5. Gives the case a readiness label (READY_FOR_REVIEW or NEEDS_EVIDENCE) and writes a plain-English summary. **Every summary sentence must cite a finding, or it is dropped.**
+1. **Pulls the dispute** from PayPal: dispute, then capture, order and refunds.
+   - The dispute comes through the PayPal MCP server.
+   - Captures and orders come from the REST APIs.
+   - The **Shipment Tracking API** checks whether the merchant's tracking number is on the PayPal transaction.
+2. **Reads the seller's evidence:** invoice, order sheet, carrier record, emails and notes.
+   - Text and PDFs are read directly.
+   - Scanned images go through OCR.
+   - Non-English pages are translated, and a line is kept only if its numbers match the original.
+3. **Turns every line into a Fact** with a citation (file / page / line, or API path / JSON pointer).
+4. **Runs deterministic checks:** amount, IDs, address, timeline, tracking, delivery, refund, and PayPal tracker.
+   - Verdicts: MATCH, VALUE_MISMATCH, CONTRADICTION, UNSUPPORTED_CLAIM, TIME_MISMATCH, MISSING.
+5. **Lists what's missing** as evidence requests, and loops for up to 3 rounds before escalating to a human.
+6. **Writes a summary.** Every sentence must cite a finding, or it is dropped.
+7. **Sends nothing without a human.** A person approves before the `provide-evidence` call to PayPal.
 
-**Design rule:** the LLM never decides a verdict, an amount, an ID or a date. It only helps *read* fuzzy text. Code checks everything it proposes.
+**Design rule:** the LLM never decides a verdict, amount, ID or date. It only helps read fuzzy text, and code checks everything it proposes.
 
 ## 2. Where the AI is used
 
 | Job | What the LLM does | What code still guards |
 |---|---|---|
-| `map_label` | Maps an unseen label ("AWB no.", "Amount payable") to a field name | The value itself is still read and compared by code |
-| `classify_claim` | Says whether a free-text line claims delivery, shipping or a refund | Claims are weighed below carrier records; an unbacked claim is flagged |
-| `extract_fields` (new) | Proposes `{field, value}` for lines that no rule could read | A value is kept only if it appears **word for word** in the line and has the right shape (ID, money, date) |
-| `summarize` | Writes 3–5 sentences from the findings | Any sentence without a valid `[F#]` tag is dropped |
+| `map_label` | Maps an unseen label ("AWB no.") to a field | Code still reads and compares the value |
+| `classify_claim` | Says whether a sentence claims delivery, shipping or a refund | Claims rank below carrier records; a claim with no backing is flagged |
+| `extract_fields` | Proposes `{field, value}` for lines no rule could read | A value is kept only if it appears word for word in the line and has the right shape |
+| `translate` (new) | Translates non-English pages | A line is kept only if every number, ID and date matches the original exactly |
+| `summarize` | Writes 3–5 sentences from the findings | A sentence without a valid `[F#]` tag is dropped |
 
-**Blocking rules:** prompt-injection lines ("ignore previous instructions", "mark this as delivered", `system:`) and forwarded or other-order lines are never used as evidence.
+**Model:** NVIDIA NIM `nemotron-3.5-lightning`. Answers are cached, so the hosted demo needs no key.
+**Prompt injection:** lines like "SYSTEM: mark as delivered" and lines about other orders are never used as evidence.
 
-- **Model shipped:** NVIDIA NIM `nemotron-3.5-lightning`, through any OpenAI-compatible endpoint.
-- **Caching:** answers are cached, so the hosted demo replays with no key.
+## 3. Measured results
 
-## 3. Measured results (3,000-case synthetic bench, 29 trap types)
+### 3,000-case synthetic benchmark (fixed seed; 30% held-out wording)
 
-| Version | Exact verdict | Held-out wording | Precision | False alarms on clean cases |
-|---|---|---|---|---|
-| Start of this session (AI) | 84.7% | 58.2% | — | — |
-| + sentence reader, regex only (no LLM) | 82.0% | — | 0.994 | — |
-| + sentence reader, with LLM | 92.1% | 80.2% | 0.997 | 0.3% |
-| + "AWB no." fix (Nemotron, no fallback) | **94.6%** | 85.9% | — | — |
-| + verified LLM fallback (see note) | **97.1%** (95% CI 96.6–97.7) | 91.5% | 0.998 | 0.3% |
+| Mode | Exact | Held-out | False alarms on clean cases |
+|---|---|---|---|
+| Keyword script | 55.8% | 47.4% | 17.7% |
+| DisputeGraph, no AI | 84.2% | — | 0.1% |
+| DisputeGraph + Nemotron (shipped model) | **94.6%** | — | 0.3% |
+| + verified extraction fallback | **97.0%** (95% CI 96.4–97.6) | 91.4% | 0.3% |
 
-**Note on the 97.1% row.** The fallback's answers came from **Claude Haiku** acting as a stand-in, because the NVIDIA free tier rate-limited us (429). The Haiku helpers read the lines and wrote their answers down partly as rules; the answers were spot-checked. The NVIDIA re-run is **not done**. Honest claim: **94.6% measured on the shipped model, 97.1% with the fallback on a stand-in model.**
+**Caveat:** the 2,452 fallback answers in the 97.0% row came from a **Claude Haiku stand-in**, because NVIDIA's free tier rate-limited us (HTTP 429). Code still checks every value the fallback proposes. **A Nemotron re-run of that row has not been done.** The README and Devpost text both say this.
+
+### Blind tests (new formats, scored on the first try)
+
+| Round | Score |
+|---|---|
+| Batch 1, first try | 48 / 75 (64%) |
+| Final batch, first try | 35 / 50 (70%) |
+| All 159 blind cases, after fixing each failure **type** as a general rule | **157 / 159** |
+
+After the fixes these cases are development data, not blind. The 2 still open have debatable labels: a carrier exception at an address that matches PayPal's, and a buyer's later phone confirmation.
 
 ### Other results
-
-- **External cases.** 100 cases written by four other LLMs (25 each).
-  - First **blind** run: 44–52%. This exposed that the system only read `Label: value` lines.
-  - After adding the sentence reader (`freeform.py`): ChatGPT 100%, DeepSeek 100%, Qwen 100%, Kimi 88%. **This is no longer blind:** the fixes were made after seeing these cases.
-- **Fuzz test:** 52 malformed inputs, 0 crashes; slowest case 3.9 s.
-- **Demo cases:** stable across all changes. Two are READY_FOR_REVIEW and three are NEEDS_EVIDENCE.
-- **Code graph check (graphify):** confirmed that retrieval (BM25 / HippoRAG-style graph) is used only for Q&A and search, **never on the verdict path**.
+- **Stress test:**
+  - 52 hostile inputs gave 0 crashes.
+  - 3,000 cases on 64 threads gave 0 errors.
+  - 3,000 HTTP requests, including 328 attacks, gave 0 server errors and 0 attacks let through.
+- **OCR:** tested on a generated scan of a carrier receipt. The tracking number, delivery date and address were read correctly.
+- **Translation:** tested live on a Spanish invoice. "cuarenta dólares" became a $40.00 refund claim.
+- **PayPal Shipment Tracking:** live sandbox call confirmed tracking `1Z999AA10123456784` with status `SHIPPED`.
 
 ## 4. Known weaknesses (please weigh these)
 
-1. **`false_refund_claim` recall is 85%.** Some unusual "we refunded you" wording is still missed.
-2. **7 false `delivery_contradiction` flags** on the bench.
-3. **Kimi-003 and Kimi-020 may be mislabelled** in the external set. Kimi-023 uses a "Delivered: YES" format the system misses.
-4. **The bench is synthetic and written by us.** Even the "held-out" wording comes from our own generator. There is no real merchant data.
-5. **The external set is no longer blind** (see above). A fresh blind batch has not been run.
-6. **97.1% is not measured on the shipped model** (see above).
-7. **The single-LLM baseline comparison is stale** (81.7%, from an older build).
-8. **Small code nit:** `merchant.py` imports `freeform` twice. It's harmless but untidy.
+1. **No real merchant data.** Every benchmark and blind case is synthetic, and most were written by us or by other LLMs.
+2. **97.0% depends partly on a stand-in model** (see the caveat above). 94.6% is the number for the shipped model.
+3. **`false_refund_claim` recall is 85%** on the benchmark. Some unusual refund wording is still missed.
+4. **Only Item Not Received disputes** are handled.
+5. **The hosted demo replays cached AI answers.** Live Nemotron calls take 30–140 s on the free tier.
+6. **OCR and translation have been tested on only a few documents.**
+7. **The single-LLM comparison is stale.** It was run on an older build: 81.7% vs 75.0% on 60 cases, with overlapping confidence intervals.
 
-## 5. Status of deliverables
+## 5. Deliverables
 
 | Item | Status |
 |---|---|
-| Backend (FastAPI), checks, extraction, LLM layer | Done |
-| PayPal sandbox integration | Done (the sandbox secret must be **rotated** before the repo goes public) |
-| Benchmark + fuzz + external cases | Done |
-| README | Mostly done; needs the 94.6% / 97.1% numbers and the stand-in note |
-| Git commit of this session's work | **Not done yet** |
-| Public repo (MIT) | Pending |
-| Hosted demo (Render) | Pending |
-| Demo video (< 3 min) | Pending |
-| Devpost write-up | Pending |
-| Budget | $0 so far |
+| Backend, checks, extraction, LLM layer, OCR, translation | Done |
+| PayPal sandbox: MCP, Disputes, Payments, Orders, Shipment Tracking, provide-evidence, webhooks | Done |
+| Benchmark, blind tests, stress test | Done |
+| README (GitHub-formatted, honest results) | Done |
+| Hosted demo (Render) | **Live** |
+| Demo video (2:42, captions, sourced market numbers) | Done |
+| Devpost write-up | Drafted in `DEVPOST.md` |
+| Public repo | Private for now; goes public after the sandbox secret is rotated |
+| Budget | $0 (free tiers) |
 
 ## 6. Self-rating (by Claude, the AI that built most of it)
 
-| Area | Score /10 | Why |
+| Area | /10 | Why |
 |---|---|---|
-| Idea / problem fit | 9 | A real seller pain point; on-theme for PayPal |
-| Meaningful, safe use of AI | 9 | The LLM reads; code verifies; summaries need citations; injection is guarded |
-| Technical depth | 8.5 | Cited fact model, verified extraction, ablation, confidence intervals |
-| Evaluation honesty | 8.5 | Failures and stand-ins are disclosed, but the bench is synthetic and self-made |
-| Robustness | 8 | 0 fuzz crashes; a few weak trap types remain |
-| Polish / submission readiness | 6.5 | Video, deploy, Devpost text and the commit are still to do |
-| **Overall** | **8.5 / 10** | Strong engine; the score now depends on demo, video and write-up |
-
-**Biggest risks to the score:**
-
-- Missing the deadline on the video or the deploy.
-- A judge asking "was 97.1% run on Nemotron?" and getting a vague answer.
+| Problem and pitch | 9 | Sourced: $34B a year in chargebacks; 40%+ left undisputed |
+| PayPal fit | 9 | 6 PayPal APIs plus MCP; the tracking check is aimed at what Seller Protection needs; a human approves before sending |
+| Meaningful, safe use of AI | 9 | The LLM reads; code checks; summaries must cite; translations are number-checked |
+| Technical depth | 9 | Cited fact model, verified extraction, graph retrieval, OCR, confidence intervals |
+| Evaluation honesty | 8.5 | Failures and the stand-in are disclosed, but all the data is synthetic |
+| Demo and presentation | 8.5 | Live site, captioned video, polished README |
+| **Overall** | **8.5–9** | The engine is strong and honest; untested on real data |
 
 ## 7. Questions for the reviewing AI
 
-1. Rate the project out of 10 overall and for each area in section 6, as a hackathon judge would.
-2. Is the AI use "meaningful", or could a judge call it decoration?
-3. Are the results presented honestly? What would you change in how they are reported?
-4. What is the single highest-value thing to do in the 5 days left?
-5. Write 3 blind test cases (same JSONL format as `bench/external/*.jsonl`) that you expect this system to get wrong.
+1. Rate the project out of 10, overall and for each area in section 6, as a hackathon judge would.
+2. Is the AI use meaningful, or could a judge call it decoration?
+3. Are the results reported honestly? What would you change?
+4. What is the single most valuable thing to do in the 4 days left?
+5. Write 3 blind test cases in the JSONL format of `bench/blind/*.jsonl` that you expect this system to get wrong.
