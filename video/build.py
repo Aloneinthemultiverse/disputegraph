@@ -5,7 +5,7 @@ Run: python build.py   then   npx hyperframes@0.9.20 check / render
 import json, os
 
 T = json.load(open("assets/vo/timing.json"))
-ORDER = ["hook", "market", "idea", "design", "ai", "case", "missing", "twist", "sweep",
+ORDER = ["market", "hook", "idea", "design", "ai", "case", "missing", "twist", "sweep",
          "human", "results", "failures", "limits", "end"]
 LEAD, TAIL = 0.35, 0.65          # silence before / after each line
 os.makedirs("compositions", exist_ok=True)
@@ -20,6 +20,32 @@ BASE_CSS = """
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:22px}
 .glow{position:absolute;inset:0;background:radial-gradient(1200px 600px at 70% -10%,rgba(245,197,107,.14),transparent 60%),radial-gradient(900px 500px at 0% 110%,rgba(240,106,166,.10),transparent 60%)}
 """
+
+
+import re as _re
+
+
+def captions(sid, text, start, vdur):
+    """Sentence chunks timed by length across the voice line; shown in a bar at the bottom."""
+    parts = [p.strip() for p in _re.split(r"(?<=[.:?!])\s+", text) if p.strip()]
+    chunks = []
+    for p in parts:  # split long sentences at commas
+        while len(p) > 90 and "," in p[:90]:
+            i = p[:90].rfind(",") + 1
+            chunks.append(p[:i].strip()); p = p[i:].strip()
+        chunks.append(p)
+    total = sum(len(c) for c in chunks)
+    html, js, t = [], "", start
+    for i, c in enumerate(chunks):
+        d = vdur * len(c) / total
+        html.append(f'    <div id="cap-{sid}-{i}" class="cap">{c}</div>')
+        js += f'    tl.fromTo("#cap-{sid}-{i}", {{opacity:0}}, {{opacity:1, duration:0.15}}, {t:.2f});\n'
+        js += f'    tl.to("#cap-{sid}-{i}", {{opacity:0, duration:0.15}}, {t + d - 0.12:.2f});\n'
+        t += d
+    return "\n".join(html), js
+
+
+CAP_CSS = ".cap{position:absolute;left:0;right:0;margin:0 auto;width:fit-content;bottom:34px;max-width:1500px;text-align:center;font-family:'Inter';font-size:34px;line-height:1.3;color:#fff;background:rgba(0,0,0,.72);padding:12px 26px;border-radius:12px;opacity:0;z-index:50}"
 
 
 def scene(sid, body, css, js, dur):
@@ -202,7 +228,7 @@ S["results"] = (f"""
     <div style="position:absolute;left:150px;right:150px;top:360px;display:flex;gap:50px">
       {stat("rs-a", "64%", "first try · batch 1 (48/75)", "var(--ink)")}
       {stat("rs-b", "70%", "first try · final batch (35/50)", "var(--ink)")}
-      {stat("rs-c", "155/159", "after fixing each failure type", "var(--green)")}
+      {stat("rs-c", "157/159", "after fixing each failure type", "var(--green)")}
     </div>
     <div id="rs-d" class="mono" style="position:absolute;left:150px;top:820px;font-size:46px">false alarms: <span style="color:var(--amber)">0.3%</span></div>
 """, "", fade("#rs-a", 3.3, 30) + fade("#rs-b", 5.0, 30) + fade("#rs-c", 9.0, 30) + fade("#rs-d", 12.6, 20))
@@ -217,26 +243,27 @@ S["failures"] = (f"""
     <div class="kicker" style="position:absolute;left:150px;top:190px">Where it failed first</div>
     <div style="position:absolute;left:150px;top:290px;display:flex;flex-direction:column;gap:42px">
 {fl}
-      <div id="fa-open" class="mono" style="font-size:42px;display:flex;gap:26px;align-items:center;margin-top:20px"><span class="pill" style="color:var(--amber);font-size:28px;padding:6px 14px">open</span>4 ambiguous cases · e.g. “confirmed by phone”</div>
+      <div id="fa-open" class="mono" style="font-size:42px;display:flex;gap:26px;align-items:center;margin-top:20px"><span class="pill" style="color:var(--amber);font-size:28px;padding:6px 14px">open</span>2 debatable cases · e.g. “confirmed by phone”</div>
     </div>
 """, "", "".join(fade(f"#fa-{i}", 1.6 + i * 1.3, 0, 0.4) for i in range(5)) + fade("#fa-open", 9.0, 0, 0.4))
 
 # 12 limits -------------------------------------------------------------------
 S["limits"] = ("""
     <div style="position:absolute;left:150px;top:300px;right:150px">
-      <div class="kicker">Honest limit</div>
-      <div id="li-a" class="serif" style="font-size:88px;line-height:1.12;margin-top:24px">Real dispute data is private.<br>We tested on <span class="grad">synthetic + sandbox</span> cases only.</div>
-      <div id="li-b" class="mono" style="font-size:36px;margin-top:70px;color:var(--muted)">next → <span style="color:var(--ink)">OCR</span> for scans · <span style="color:var(--ink)">translation</span> for foreign documents</div>
+      <div id="li-b" class="mono" style="font-size:40px;color:var(--muted)">added → <span style="color:var(--green)">OCR</span> for scanned receipts · <span style="color:var(--green)">translation</span> checked number by number</div>
+      <div class="kicker" style="margin-top:90px">Honest limit</div>
+      <div id="li-a" class="serif" style="font-size:80px;line-height:1.12;margin-top:24px">Real dispute data is private.<br>We tested on <span class="grad">synthetic + sandbox</span> cases only.</div>
     </div>
-""", "", fade("#li-a", 0.4, 30) + fade("#li-b", 6.6, 20))
+""", "", fade("#li-b", 0.4, 20) + fade("#li-a", 6.2, 30))
 
 # 13 end ----------------------------------------------------------------------
 S["end"] = ("""
     <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px">
       <div id="en-a" class="mono" style="font-size:96px">~/dispute<span class="grad">graph</span></div>
       <div id="en-b" class="serif" style="font-size:64px;font-style:italic">It doesn't guess. <span class="grad">It asks.</span></div>
+      <div id="en-c" class="mono" style="font-size:44px;margin-top:40px;color:var(--amber)">disputegraph.onrender.com</div>
     </div>
-""", "", fade("#en-a", 0.2, 20, 0.6) + fade("#en-b", 1.1, 20, 0.6))
+""", "", fade("#en-a", 0.2, 20, 0.6) + fade("#en-b", 1.1, 20, 0.6) + fade("#en-c", 3.3, 20, 0.6))
 
 # assemble ---------------------------------------------------------------------
 hosts, audios, t = [], [], 0.0
@@ -244,6 +271,8 @@ for i, sid in enumerate(ORDER):
     vo = T[sid]
     dur = round(LEAD + vo["dur"] + TAIL + (1.2 if sid == "end" else 0), 2)
     body, css, js = S[sid]
+    ch, cj = captions(sid, vo["text"], LEAD, vo["dur"])
+    body, css, js = body + "\n" + ch, css + CAP_CSS, js + cj
     open(f"compositions/{sid}.html", "w", encoding="utf-8").write(scene(sid, body, css, js, dur))
     hosts.append(f'      <div id="{sid}" data-composition-id="{sid}" data-composition-src="compositions/{sid}.html" class="clip" '
                  f'data-start="{t:.2f}" data-duration="{dur}" data-track-index="1" data-track-kind="graphics" '

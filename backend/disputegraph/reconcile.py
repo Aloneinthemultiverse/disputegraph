@@ -300,8 +300,24 @@ def tracking_reuse(cases: dict[str, list[Fact]]) -> dict[str, list[str]]:
     return {t: sorted(ids) for t, ids in seen.items() if len(ids) > 1}
 
 
+def check_paypal_tracker(pp, mc) -> list[Finding]:
+    """Is the tracking the merchant shipped with registered on the PayPal transaction?
+    Runs only when the PayPal Shipment Tracking API was actually asked."""
+    trk = [f for f in pp if f.field == "paypal_tracker"]
+    if not trk:
+        return []
+    found = [f for f in trk if f.value.get("found")]
+    if found:
+        st = found[0].value.get("status") or "on file"
+        return [Finding(check="paypal_tracker", verdict="MATCH", paypal=found[:1],
+                        note=f"tracking {found[0].value['tracking_number']} is on the PayPal transaction ({st})")]
+    return [Finding(check="paypal_tracker", verdict="MISSING", paypal=trk[:1],
+                    note=f"tracking {trk[0].value['tracking_number']} was never added to the PayPal transaction; "
+                         "Seller Protection relies on tracking PayPal can see")]
+
+
 CHECKS = [check_ids, check_amount, check_ship_to, check_timeline, check_delivery, check_refunds,
-          check_tracking, check_delivery_time]
+          check_tracking, check_delivery_time, check_paypal_tracker]
 
 
 def reconcile(paypal_facts: list[Fact], merchant_facts: list[Fact]) -> list[Finding]:

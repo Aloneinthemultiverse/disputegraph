@@ -1,7 +1,7 @@
 {
   "dispute_id": "PP-R-QYH-10196792",
   "create_time": "2026-11-06T09:06:26.575Z",
-  "update_time": "2026-11-06T09:09:53.730Z",
+  "update_time": "2026-11-06T09:26:43.952Z",
   "disputed_transactions": [
     {
       "buyer_transaction_id": "0MC64396F60965048",
@@ -38,12 +38,12 @@
     }
   ],
   "reason": "MERCHANDISE_OR_SERVICE_NOT_RECEIVED",
-  "status": "WAITING_FOR_SELLER_RESPONSE",
+  "status": "WAITING_FOR_BUYER_RESPONSE",
   "dispute_amount": {
     "currency_code": "USD",
     "value": "750.00"
   },
-  "dispute_state": "REQUIRED_ACTION",
+  "dispute_state": "REQUIRED_OTHER_PARTY_ACTION",
   "fund_movements": [
     {
       "party": "RECEIVER",
@@ -78,11 +78,24 @@
     },
     {
       "evidence_type": "PROOF_OF_FULFILLMENT",
-      "source": "REQUESTED_FROM_SELLER",
-      "date": "2026-11-06T09:09:53.730Z"
+      "evidence_info": {
+        "tracking_info": [
+          {
+            "carrier_name": "UPS",
+            "tracking_number": "1Z999AA10123456784"
+          }
+        ]
+      },
+      "notes": "Invoice INV-E2462F39, 750.00 USD.\n- INV-E2462F39 matches across 2 merchant doc(s) [INV-E2462F39/invoice.md page 1, line 2]\n- courier_tracking ships to San Jose 95131 [INV-E2462F39/courier_tracking.md page 1, line 3]\n- invoice ships to San Jose 95131 [INV-E2462F39/invoice.md page 1, line 5]\n- uploaded_courier_tracking_update ships to San Jose 95131 [INV-E2462F39/uploaded_courier_tracking_update.md page 1, line 4]\n- shipped 2026-11-06, on/after capture 2026-11-06 [INV-E2462F39/order_sheet.md page 1, line 9]\n- carrier record confirms delivery [INV-E2462F39/emails.md page 2, line 6]\n- Carrier delivery scan: Delivered - Front Door at 2026-11-07 15:47.",
+      "source": "SUBMITTED_BY_SELLER",
+      "date": "2026-11-06T09:26:25.300Z",
+      "action_info": {
+        "action": "PROVIDE_EVIDENCE"
+      },
+      "dispute_life_cycle_stage": "INQUIRY"
     }
   ],
-  "seller_response_due_date": "2026-11-26T09:06:26.575Z",
+  "buyer_response_due_date": "2026-11-26T09:06:26.575Z",
   "offer": {
     "buyer_requested_amount": {
       "currency_code": "USD",
@@ -98,45 +111,29 @@
   "allowed_response_options": {
     "accept_claim": {
       "accept_claim_types": [
-        "PARTIAL_REFUND",
-        "REFUND"
-      ]
-    },
-    "make_offer": {
-      "offer_types": [
         "REFUND"
       ]
     }
   },
   "links": [
     {
-      "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-QYH-10196792",
+      "href": "https://api.sandbox.paypal.com/v1/customer/disputes/PP-R-QYH-10196792",
       "rel": "self",
       "method": "GET"
     },
     {
-      "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-QYH-10196792/accept-claim",
+      "href": "https://api.sandbox.paypal.com/v1/customer/disputes/PP-R-QYH-10196792/accept-claim",
       "rel": "accept_claim",
       "method": "POST"
     },
     {
-      "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-QYH-10196792/provide-evidence",
-      "rel": "provide_evidence",
-      "method": "POST"
-    },
-    {
-      "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-QYH-10196792/send-message",
+      "href": "https://api.sandbox.paypal.com/v1/customer/disputes/PP-R-QYH-10196792/send-message",
       "rel": "send_message",
       "method": "POST"
     },
     {
-      "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-QYH-10196792/escalate",
+      "href": "https://api.sandbox.paypal.com/v1/customer/disputes/PP-R-QYH-10196792/escalate",
       "rel": "escalate",
-      "method": "POST"
-    },
-    {
-      "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-QYH-10196792/make-offer",
-      "rel": "make_offer",
       "method": "POST"
     }
   ]

@@ -8,7 +8,7 @@
 .pill{display:inline-block;font-family:'JetBrains Mono';font-size:28px;padding:10px 22px;border-radius:999px;border:2px solid currentColor}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:22px}
 .glow{position:absolute;inset:0;background:radial-gradient(1200px 600px at 70% -10%,rgba(245,197,107,.14),transparent 60%),radial-gradient(900px 500px at 0% 110%,rgba(240,106,166,.10),transparent 60%)}
-</style>
+.cap{position:absolute;left:0;right:0;margin:0 auto;width:fit-content;bottom:34px;max-width:1500px;text-align:center;font-family:'Inter';font-size:34px;line-height:1.3;color:#fff;background:rgba(0,0,0,.72);padding:12px 26px;border-radius:12px;opacity:0;z-index:50}</style>
   <div id="root" data-composition-id="missing" data-width="1920" data-height="1080">
     <div class="glow" data-layout-allow-overflow data-layout-ignore></div>
 
@@ -16,12 +16,18 @@
       <img id="missing-img" src="assets/shots/01-overview.png" style="position:absolute;left:0;top:0;width:1920px;height:1200px;border-radius:18px;box-shadow:0 30px 120px rgba(0,0,0,.6)">
       <div id="mis-hl" style="position:absolute;left:1305px;top:985px;width:440px;height:140px;border:5px solid var(--pink);border-radius:16px;box-shadow:0 0 40px var(--pink)"></div>
     </div>
+    <div id="cap-missing-0" class="cap">And when something is missing, it says exactly what:</div>
+    <div id="cap-missing-1" class="cap">no carrier record for this tracking number, so delivery can't be verified.</div>
   </div>
   <script>
     const tl = gsap.timeline({ paused: true });
     tl.fromTo("#missing-cam", {x:148, y:62, scale:0.8460, opacity:0}, {x:148, y:32, scale:0.8460, opacity:1, duration:0.7, ease:"power3.out"}, 0);
     tl.to("#missing-cam", {x:-1636, y:-1262, scale:1.7, duration:1.4, ease:"power2.inOut"}, 0.80);
     tl.fromTo("#mis-hl", {opacity:0, y:0}, {opacity:1, y:0, duration:0.35, ease:"power3.out"}, 2.20);
+    tl.fromTo("#cap-missing-0", {opacity:0}, {opacity:1, duration:0.15}, 0.35);
+    tl.to("#cap-missing-0", {opacity:0, duration:0.15}, 3.65);
+    tl.fromTo("#cap-missing-1", {opacity:0}, {opacity:1, duration:0.15}, 3.77);
+    tl.to("#cap-missing-1", {opacity:0, duration:0.15}, 8.51);
 
     tl.fromTo("#root .glow", {scale:1, x:0}, {scale:1.25, x:-120, duration:9.28, ease:"none"}, 0);
     window.__timelines["missing"] = tl;

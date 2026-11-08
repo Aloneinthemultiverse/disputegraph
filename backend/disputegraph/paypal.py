@@ -45,6 +45,30 @@ class PayPal:
     def _key(path: str) -> Path:
         return CACHE / (re.sub(r"[^A-Za-z0-9]+", "_", path).strip("_") + ".json")
 
+    def get_optional(self, path: str) -> dict | None:
+        """GET that treats 404 as an answer ({"_not_found": true}, cached too).
+        Returns None only when nothing is known (demo mode with no cached answer, or a network error)."""
+        key = self._key(path)
+        if key.exists():
+            self.via[path] = "cache"
+            return json.loads(key.read_text(encoding="utf-8"))
+        if self.demo:
+            return None
+        try:
+            r = requests.get(f"{self.base}{path}", timeout=30,
+                             headers={"Authorization": f"Bearer {self._auth()}"})
+        except Exception:
+            return None
+        if r.status_code == 404:
+            body = {"_not_found": True}
+        elif r.ok:
+            body = r.json()
+        else:
+            return None
+        self.via[path] = "rest"
+        key.write_text(json.dumps(body, indent=2), encoding="utf-8")
+        return body
+
     def get(self, path: str) -> dict:
         """GET an API path like /v2/payments/captures/ID (also accepts full URLs)."""
         path = re.sub(r"^https://api(-m)?\.sandbox\.paypal\.com", "", path)

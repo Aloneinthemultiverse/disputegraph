@@ -81,6 +81,7 @@ ASK_MISSING = {
     "delivery_time": "Upload the carrier's dated delivery scan for {t}.",
     "id:invoice_id": "Upload the invoice showing its invoice number.",
     "id:custom_id": "Upload the order sheet showing the order / PO reference.",
+    "paypal_tracker": "Add tracking {t} to the PayPal transaction (PayPal Add Tracking API or Activity page).",
 }
 
 
@@ -110,6 +111,7 @@ def investigate(dispute_id: str) -> dict:
     m_facts = extract(inv)
     docs = sorted({f.source.ref for f in m_facts})
     log(dispute_id, "Merchant Evidence Analyst", "extract", f"{len(m_facts)} facts from {len(docs)} docs")
+    pg.add_trackers([f.value for f in m_facts if f.field == "tracking"])  # PayPal Shipment Tracking API
     findings = reconcile(pg.facts, m_facts)
     reqs = _requests(findings, pg.facts + m_facts)
     log(dispute_id, "Reconciliation Investigator", "reconcile",

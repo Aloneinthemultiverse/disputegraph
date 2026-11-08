@@ -121,6 +121,23 @@ class PayPalGraph:
             self.facts.append(_fact(on, "payer_id", o["payer"]["payer_id"], ref, "/payer/payer_id", at))
         return on
 
+    def add_trackers(self, tracking_numbers: list[str]) -> None:
+        """PayPal Shipment Tracking API: is the merchant's tracking number on the PayPal transaction?
+        Seller Protection for Item Not Received relies on tracking PayPal can see.
+        Tracker id = <capture/transaction id>-<tracking number>."""
+        caps = [n.split(":", 1)[1] for n, d in self.g.nodes(data=True) if d.get("kind") == "capture"]
+        for cap in caps:
+            for tn in dict.fromkeys(str(t).replace(" ", "") for t in tracking_numbers):
+                ref = f"/v1/shipping/trackers/{cap}-{tn}"
+                body = self.pp.get_optional(ref)
+                if body is None:
+                    continue  # never looked up (demo without a cached answer): say nothing
+                found = not body.get("_not_found")
+                self.facts.append(_fact(f"tracker:{cap}", "paypal_tracker",
+                                        {"tracking_number": tn, "found": found,
+                                         "status": body.get("status"), "carrier": body.get("carrier")},
+                                        ref, "/status" if found else "(404 not found)"))
+
     # -- views ------------------------------------------------------------
     def summary(self) -> str:
         lines = [f"{u} --{d['rel']}--> {v}" for u, v, d in self.g.edges(data=True)]

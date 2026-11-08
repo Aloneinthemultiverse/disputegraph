@@ -28,7 +28,7 @@
     "merchant_id": "L7AL425V7L3AU"
   },
   "create_time": "2026-11-06T09:01:56Z",
-  "update_time": "2026-11-06T09:09:32Z",
+  "update_time": "2026-11-06T09:26:47Z",
   "links": [
     {
       "href": "https://api.sandbox.paypal.com/v2/payments/captures/0FW80593L7360991P",

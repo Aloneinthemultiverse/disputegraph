@@ -21,8 +21,7 @@
       "reference_id": "A123",
       "amount": {
         "currency_code": "USD",
-        "value": "750.00",
-        "breakdown": {}
+        "value": "750.00"
       },
       "payee": {
         "email_address": "sb-jzaep53656720@business.example.com",
@@ -84,7 +83,7 @@
               }
             ],
             "create_time": "2026-11-06T09:01:56Z",
-            "update_time": "2026-11-06T09:09:32Z"
+            "update_time": "2026-11-06T09:26:47Z"
           }
         ],
         "refunds": [
@@ -153,8 +152,8 @@
       "country_code": "US"
     }
   },
-  "create_time": "2026-11-06T09:01:56Z",
-  "update_time": "2026-11-06T09:09:32Z",
+  "create_time": "2026-11-06T08:57:38Z",
+  "update_time": "2026-11-06T09:01:56Z",
   "links": [
     {
       "href": "https://api.sandbox.paypal.com/v2/checkout/orders/8FS35646M7113023B",
