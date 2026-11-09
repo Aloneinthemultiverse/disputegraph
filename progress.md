@@ -74,7 +74,7 @@ A flag means **human review**, never automatic rejection. AI-made evidence sends
 
 **Caveat:** the 2,452 fallback answers in the 98.7% row came from a **Claude Haiku stand-in**, because NVIDIA's free tier rate-limited us (HTTP 429). Code still checks every value the fallback proposes. **A Nemotron re-run of that row has not been done.** The README and Devpost text both say this.
 
-**Refund fix (Nov 8):** we studied the benchmark's missed refund cases and added one general rule for money returned without the word "refund" ("sent the payment back", "money is on its way back"). Refund recall went from 85% to 98% with 0 new false positives, and the blind tests stayed at 157/159. Because that rule came from looking at benchmark misses, the held-out split is no longer fully unseen for refunds. Before the fix: 94.6% (Nemotron), 97.0% (with fallback), 91.4% held-out. The demo video still shows the older 94.6%.
+**Refund fix (Nov 8):** we studied the benchmark's missed refund cases and added one general rule for money returned without the word "refund" ("sent the payment back", "money is on its way back"). Refund recall went from 85% to 98% with 0 new false positives, and the blind tests stayed at 157/159. Because that rule came from looking at benchmark misses, the held-out split is no longer fully unseen for refunds. Before the fix: 94.6% (Nemotron), 97.0% (with fallback), 91.4% held-out. The demo video shows the updated 96.2%.
 
 ### Blind tests (new formats, scored on the first try)
 

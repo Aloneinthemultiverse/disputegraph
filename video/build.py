@@ -272,7 +272,7 @@ S["proof"] = (f"""
     <div id="pf-q" class="serif" style="position:absolute;left:150px;top:240px;font-size:64px;font-style:italic">Most AI demos show it works <span class="grad">once.</span></div>
     <div style="position:absolute;left:150px;right:150px;top:420px;display:flex;gap:60px">
       {stat("pf-a", "3,000", "test cases, fixed seed", "var(--ink)")}
-      {stat("pf-b", "94.6%", "exact verdicts · Nemotron", "var(--green)")}
+      {stat("pf-b", "96.2%", "exact verdicts · Nemotron", "var(--green)")}
       {stat("pf-c", "0.3%", "false alarms on clean cases", "var(--amber)")}
     </div>
     <div id="pf-d" class="mono" style="position:absolute;left:150px;top:850px;font-size:40px;color:var(--muted)">keyword script → <span style="color:var(--red)">55.8%</span> exact, 17.7% false alarms</div>
